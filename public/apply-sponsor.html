@@ -103,11 +103,12 @@
     }
 
     .brand-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 18px rgba(114,255,152,.9);
+      width: 24px;
+      height: 24px;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(114,255,152,.55));
+      flex-shrink: 0;
+      shape-rendering: crispEdges;
     }
 
     .nav {
@@ -547,7 +548,7 @@
 <body>
   <div class="topbar">
     <div class="container topbar-inner">
-      <div class="brand"><span class="brand-dot"></span> Vibe Code Cup</div>
+      <div class="brand"><svg class="brand-dot" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path fill="#2d6c44" d="M20 14h24v6h6v10h-6v8H20v-8h-6V20h6z"/><path fill="#7be396" d="M22 18h20v16H22z"/><path fill="#eaffee" d="M24 18h10v6H24z"/><path fill="#4fa56b" d="M28 38h8v6h-8zm-6 10h20v6H22z"/><path fill="#72ff98" d="M16 22h4v6h-4zm28 0h4v6h-4z"/></svg> Vibe Code Cup</div>
       <div class="nav">
         <a href="/#format">Format</a>
         <a href="/apply-competitor.html">Register</a>
