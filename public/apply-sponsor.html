@@ -4,7 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vibe Code Cup</title>
-  <meta name="description" content="Vibe Code Cup All tools allowed. 90-minute hack sprint. Hard challenge disclosed at kickoff." />
+  <meta name="description" content="Vibe Code Cup. All tools allowed. 90-minute hack sprint. Hard challenge disclosed at kickoff." />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vibe-code-cup.pages.dev/" />
+  <meta property="og:title" content="Vibe Code Cup" />
+  <meta property="og:description" content="Elite builders • Timed challenge • Hard reveal at kickoff. All tools allowed." />
+  <meta property="og:image" content="/og-image.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://vibe-code-cup.pages.dev/" />
+  <meta property="twitter:title" content="Vibe Code Cup" />
+  <meta property="twitter:description" content="Elite builders • Timed challenge • Hard reveal at kickoff. All tools allowed." />
+  <meta property="twitter:image" content="/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Raleway:wght@500;700&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
@@ -123,6 +137,7 @@
       border: 1px solid transparent;
       transition: transform .14s ease, border-color .14s ease, background .14s ease;
       cursor: pointer;
+      text-align: center;
     }
     .btn:hover { transform: translateY(-1px); }
     .btn-primary {
@@ -396,7 +411,7 @@
     .tiny { color: var(--muted); font-size: 12px; line-height: 1.5; }
 
     .section {
-      padding: 26px 0 8px;
+      padding: 96px 0 32px;
     }
 
     .section-head {
@@ -454,10 +469,35 @@
 
     .judging .feature h3 { font-size: 21px; }
 
-    .sponsor-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    .sponsor-marquee {
+      width: 100%;
+      overflow: hidden;
+      display: flex;
       gap: 16px;
+      margin-bottom: 24px;
+      mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    }
+
+    .sponsor-track {
+      display: flex;
+      gap: 16px;
+      min-width: max-content;
+      animation: scroll 20s linear infinite;
+    }
+
+    .sponsor-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(-50% - 8px)); }
+    }
+
+    .sponsor-box {
+      width: 260px;
+      flex-shrink: 0;
     }
 
     .sponsor-slot {
@@ -481,7 +521,7 @@
     }
 
     @media (max-width: 1060px) {
-      .hero-grid, .grid-3, .judging, .sponsor-grid { grid-template-columns: 1fr; }
+      .hero-grid, .grid-3 { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(3, 1fr); }
       .hero-shell { border-radius: 24px; }
     }
@@ -499,7 +539,7 @@
       .hero-shell { min-height: calc(100svh - 84px); }
       .hero-minimal { width: min(100%, 620px); }
       .hero-minimal h1 { font-size: clamp(36px, 11vw, 56px); max-width: 11ch; }
-      .section-head { align-items: start; flex-direction: column; }
+      .section-head { align-items: start; flex-direction: column; text-align: left; }
     }
   </style>
 </head>
@@ -508,183 +548,109 @@
     <div class="container topbar-inner">
       <div class="brand"><span class="brand-dot"></span> Vibe Code Cup</div>
       <div class="nav">
-        <a href="#format">Format</a>
-        <a href="#enter">Enter</a>
-        <a href="#sponsors">Sponsor value</a>
-        <a href="#faq">FAQ</a>
-        <a href="#enter" class="btn btn-primary" style="min-height:40px;padding:0 14px;">Apply</a>
+        <a href="/#format">Format</a>
+        <a href="/apply-competitor.html">Register</a>
+        <a href="/#sponsors">Sponsors</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/apply-competitor.html" class="btn btn-primary" style="min-height:40px;padding:0 14px;">Register</a>
       </div>
     </div>
   </div>
 
   <main>
-    <section class="hero container">
-      <div class="hero-shell" style="width:100%;">
-        <div class="hero-video-placeholder"></div>
-        <div class="hero-grid">
-          <div class="hero-minimal">
-            <div class="eyebrow">Elite builders • Timed challenge • Hard reveal at kickoff</div>
-            <h1>Vibe Code Cup</h1>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section container" style="padding-top:6px;">
-      <div class="panel" style="padding:18px 22px; display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
-        <div>
-          <div class="section-label">What this is</div>
-          <div style="font-size:22px; font-weight:700; margin-top:8px;">A premium builder competition where talent, workflow, and shipping speed all matter.</div>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <div class="pill">Real builders</div>
-          <div class="pill">Open applications</div>
-          <div class="pill">Sponsor slots open</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="enter" class="section container">
+    <section class="section container" style="padding-top: 120px; min-height: calc(100vh - 100px);">
       <div class="section-head">
-        <h2>Apply to compete</h2>
-        <p class="section-lead">Compete in a timed challenge and show how you build under pressure.</p>
+        <h2>Sponsor the Cup</h2>
+        <p class="section-lead">Put your brand in front of elite builders, operators, and the audience following what software looks like next.</p>
       </div>
+
       <div class="grid-3" style="grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);">
-        <div id="enter-form" class="hero-form panel panel-strong">
-          <div class="section-label">Competitor application</div>
-          <label>
-            Name
-            <input type="text" placeholder="Your name" />
-          </label>
-          <label>
-            Email
-            <input type="email" placeholder="you@example.com" />
-          </label>
-          <label>
-            GitHub / website
-            <input type="url" placeholder="https://github.com/you" />
-          </label>
-          <label>
-            X / social
-            <input type="url" placeholder="https://x.com/you" />
-          </label>
-          <label>
-            Why should you be in the Cup?
-            <textarea placeholder="What do you build, what tools do you use, and why should people watch your workflow?"></textarea>
-          </label>
-          <button class="btn btn-primary" type="button">Apply now</button>
-          <div class="tiny">Swap this for Tally, Typeform, Formspree, or your backend when ready.</div>
+        <div class="hero-form panel panel-strong">
+          <div class="section-label">Sponsorship inquiry</div>
+          <form id="sponsor-form" style="display: contents;">
+            <label>
+              Your Name
+              <input type="text" name="name" required placeholder="Jane Doe" />
+            </label>
+            <label>
+              Work Email
+              <input type="email" name="email" required placeholder="you@company.com" />
+            </label>
+            <label>
+              Company Website
+              <input type="url" name="githubUrl" required placeholder="https://company.com" />
+            </label>
+            <label>
+              What kind of partnership are you looking for?
+              <textarea name="description" placeholder="(e.g., Title sponsor, tools partner, prize pool contribution, etc.)"></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit" style="width: 100%;">Submit Inquiry</button>
+            <div id="form-status" class="tiny" style="min-height: 18px;"></div>
+          </form>
         </div>
+
         <div class="panel" style="padding:24px; display:grid; gap:14px; align-content:start;">
-          <div class="section-label">Who should apply</div>
-          <div class="mini-row"><span>Builders with taste</span><span class="tag">Featured</span></div>
-          <div class="mini-row"><span>Clear workflows</span><span class="tag">On stream</span></div>
-          <div class="mini-row"><span>Interesting tool stacks</span><span class="tag">Visible</span></div>
-          <div class="mini-row"><span>Ship-ready submissions</span><span class="tag">Judged</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="format" class="section container">
-      <div class="section-head">
-        <h2>Format</h2>
-        <p class="section-lead">One reveal. One clock. Real software under pressure.</p>
-      </div>
-      <div class="grid-3">
-        <div class="feature panel">
-          <div class="section-label">01</div>
-          <h3>Kickoff</h3>
-          <p>The challenge is revealed live at kickoff. No advance prep.</p>
-        </div>
-        <div class="feature panel">
-          <div class="section-label">02</div>
-          <h3>Sprint</h3>
-          <p>Bring whatever tools you trust. You have 90 minutes to build, test, and submit.</p>
-        </div>
-        <div class="feature panel">
-          <div class="section-label">03</div>
-          <h3>Finale</h3>
-          <p>Top entries rise to the top and move into the streamed showdown.</p>
-        </div>
-      </div>
-      <div class="judging">
-        <div class="feature panel">
-          <div class="section-label">Judging pass</div>
-          <h3>Correctness</h3>
-          <p>The code has to work.</p>
-        </div>
-        <div class="feature panel">
-          <div class="section-label">Judging pass</div>
-          <h3>Submission speed</h3>
-          <p>Fast finishers get rewarded.</p>
-        </div>
-        <div class="feature panel">
-          <div class="section-label">Judging pass</div>
-          <h3>Execution speed</h3>
-          <p>Faster code rises higher.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="watch" class="section container">
-      <div class="section-head">
-        <h2>For viewers</h2>
-        <p class="section-lead">Watch the challenge drop, the leaderboard move, and the top entries fight for the win.</p>
-      </div>
-      <div class="grid-3">
-        <div class="feature panel">
-          <div class="section-label">Watch</div>
-          <h3>Challenge reveal</h3>
-          <p>The moment everyone sees the problem for the first time.</p>
-        </div>
-        <div class="feature panel">
-          <div class="section-label">Watch</div>
-          <h3>Workflow on display</h3>
-          <p>See which stacks, tools, and habits actually hold up under pressure.</p>
-        </div>
-        <div class="feature panel">
-          <div class="section-label">Watch</div>
-          <h3>Final showdown</h3>
-          <p>The top entries advance and fight for the win on the stream.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="sponsors" class="section container">
-      <div class="section-head">
-        <h2>Sponsor value</h2>
-        <p class="section-lead">Put your brand in front of builders, operators, and the audience following what software looks like next.</p>
-      </div>
-      <div class="sponsor-grid">
-        <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Title Sponsor</div></div>
-        <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Prize Partner</div></div>
-        <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Broadcast Partner</div></div>
-        <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Tools Partner</div></div>
-      </div>
-    </section>
-
-    <section id="faq" class="section container">
-      <div class="section-head">
-        <h2>Quick answers</h2>
-        <p class="section-lead">Simple enough for the audience. Serious enough for the builders.</p>
-      </div>
-      <div class="grid-3">
-        <div class="faq panel">
-          <h3>Do competitors know the challenge?</h3>
-          <p>No. The challenge is disclosed only at kickoff.</p>
-        </div>
-        <div class="faq panel">
-          <h3>What tools are allowed?</h3>
-          <p>All tools are allowed during the build. Final submissions still need to stand on their own.</p>
-        </div>
-        <div class="faq panel">
-          <h3>Who is this for?</h3>
-          <p>Builders who want to compete, viewers who want to watch, and brands that want to back the next wave.</p>
+          <div class="section-label">Why sponsor?</div>
+          <div class="mini-row"><span>High intent builders</span><span class="tag">Audience</span></div>
+          <div class="mini-row"><span>Tools in action</span><span class="tag">Visibility</span></div>
+          <div class="mini-row"><span>Next-wave standard</span><span class="tag">Brand</span></div>
+          <div class="mini-row"><span>Premium production</span><span class="tag">Quality</span></div>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer container">Vibe Code Cup • premium builder competition</footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('sponsor-form');
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const statusDiv = document.getElementById('form-status');
+          const submitBtn = form.querySelector('button[type="submit"]');
+
+          statusDiv.style.color = 'var(--muted)';
+          statusDiv.textContent = 'Submitting inquiry...';
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.7';
+
+          const formData = new FormData(form);
+          const data = {
+            type: 'sponsor',
+            name: formData.get('name'),
+            email: formData.get('email'),
+            githubUrl: formData.get('githubUrl'),
+            description: formData.get('description')
+          };
+
+          try {
+            const response = await fetch('/api/apply', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              statusDiv.style.color = 'var(--accent)';
+              statusDiv.textContent = 'Success! We will be in touch shortly.';
+              form.reset();
+            } else {
+              statusDiv.style.color = '#ff7272';
+              statusDiv.textContent = result.error || 'Something went wrong. Please try again.';
+            }
+          } catch (err) {
+            statusDiv.style.color = '#ff7272';
+            statusDiv.textContent = 'Failed to connect. Please try again later.';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

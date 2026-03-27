@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vibe Code Cup</title>
+  <meta name="description" content="Vibe Code Cup. All tools allowed. 90-minute hack sprint. Hard challenge disclosed at kickoff." />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vibe-code-cup.pages.dev/" />
+  <meta property="og:title" content="Vibe Code Cup" />
+  <meta property="og:description" content="Elite builders • Timed challenge • Hard reveal at kickoff. All tools allowed." />
+  <meta property="og:image" content="/og-image.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://vibe-code-cup.pages.dev/" />
+  <meta property="twitter:title" content="Vibe Code Cup" />
+  <meta property="twitter:description" content="Elite builders • Timed challenge • Hard reveal at kickoff. All tools allowed." />
+  <meta property="twitter:image" content="/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Raleway:wght@500;700&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030403;
+      --bg-soft: #0a120d;
+      --panel: rgba(8, 14, 11, 0.74);
+      --panel-strong: rgba(8, 14, 10, 0.88);
+      --line: rgba(139, 255, 176, 0.10);
+      --line-strong: rgba(139, 255, 176, 0.18);
+      --text: #f4fff6;
+      --muted: #a3b8a8;
+      --accent: #72ff98;
+      --accent-soft: #d6ffe1;
+      --shadow: 0 0 0 1px rgba(139,255,176,0.05), 0 24px 80px rgba(0,0,0,0.42);
+      --content-max: 720px;
+      --radius: 24px;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(63, 156, 89, 0.18), transparent 28%),
+        linear-gradient(180deg, #09100c 0%, #040605 35%, #020302 100%);
+      color: var(--text);
+      font-family: "Geist", Inter, system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(114,255,152,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(114,255,152,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, rgba(255,255,255,.55), rgba(255,255,255,.08));
+    }
+
+    .container { width: min(var(--max), calc(100vw - 32px)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 14px;
+      z-index: 50;
+      padding: 0 0 10px;
+      background: transparent;
+      border-bottom: 0;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1120px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 14px 18px;
+      border: 1px solid rgba(139, 255, 176, 0.12);
+      border-radius: 22px;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 10, 7, 0.74);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: "Special Gothic Expanded One", sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(114,255,152,.9);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      border-radius: 14px;
+      padding: 0 18px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #041008;
+      box-shadow: 0 10px 40px rgba(114,255,152,0.18);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.09);
+    }
+
+    .hero {
+      min-height: calc(75svh - 72px);
+      display: flex;
+      align-items: stretch;
+      padding: 0;
+    }
+
+    .hero-shell {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
+        linear-gradient(135deg, rgba(12, 25, 17, 0.92), rgba(6, 10, 8, 0.96));
+      box-shadow: var(--shadow);
+      min-height: calc(75svh - 88px);
+    }
+
+    .hero-video-placeholder {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(114,255,152,0.08), transparent 18%),
+        radial-gradient(circle at 82% 25%, rgba(114,255,152,0.06), transparent 20%),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: auto, auto, 38px 38px, 38px 38px;
+      opacity: .5;
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(75svh - 88px);
+      padding: clamp(28px, 4vw, 52px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(114,255,152,0.06);
+      border: 1px solid rgba(114,255,152,0.12);
+      color: #d9e9dd;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      max-width: 980px;
+      font-family: "Special Gothic Expanded One", sans-serif;
+      font-size: clamp(58px, 7vw, 104px);
+      line-height: .93;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 620px;
+      font-family: "Raleway", sans-serif;
+      font-size: clamp(19px, 1.9vw, 25px);
+      line-height: 1.32;
+      color: #d9e9dd;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 26px;
+    }
+
+    .pill {
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .subnote {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-strong {
+      background: var(--panel-strong);
+      border: 1px solid var(--line-strong);
+    }
+
+    .hero-card { padding: 22px; }
+    .section-label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat-k { color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+    .stat-v { margin-top: 10px; font-size: 26px; font-weight: 800; }
+
+
+
+    .hero-form {
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-proof {
+      display: grid;
+      gap: 12px;
+      padding: 24px;
+    }
+
+    .proof-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--text);
+    }
+
+    .proof-line:first-of-type { border-top: 0; padding-top: 4px; }
+
+    .proof-line strong { font-size: 18px; font-weight: 700; }
+
+    .proof-line span { color: var(--muted); font-size: 14px; }
+
+
+    .hero-minimal {
+      width: min(860px, 100%);
+      display: grid;
+      justify-items: center;
+      gap: 18px;
+      margin: 0 auto;
+    }
+
+    .hero-minimal .eyebrow {
+      margin: 0;
+    }
+
+    .hero-minimal h1 {
+      margin: 0;
+      max-width: 13ch;
+      font-size: clamp(42px, 7.2vw, 92px);
+      line-height: 0.96;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+
+    .hero-form h3 {
+      margin: 4px 0 2px;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .hero-form p {
+      margin: 0 0 2px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 15px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-size: 13px;
+      color: #d9e9dd;
+      font-weight: 600;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 14px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input::placeholder, textarea::placeholder { color: #7c9281; }
+    textarea { min-height: 120px; resize: vertical; }
+
+    .tiny { color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+    .section {
+      padding: 96px 0 32px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-family: "Special Gothic Expanded One", sans-serif;
+      font-size: clamp(28px, 4.2vw, 54px);
+      line-height: .98;
+      text-transform: uppercase;
+    }
+
+    .section-lead {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .feature, .faq, .sponsor-box {
+      padding: 22px;
+    }
+
+    .feature h3, .faq h3 {
+      margin: 10px 0 10px;
+      font-size: 24px;
+      line-height: 1.05;
+    }
+
+    .feature p, .faq p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+
+
+    .sponsor-marquee {
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      /* Add fading edges so it looks clean as it scrolls in and out */
+      mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    }
+
+    .sponsor-track {
+      display: flex;
+      gap: 16px;
+      min-width: max-content;
+      animation: scroll 20s linear infinite;
+    }
+
+    .sponsor-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(-50% - 8px)); }
+    }
+
+    .sponsor-box {
+      width: 260px;
+      flex-shrink: 0;
+    }
+
+    .sponsor-slot {
+      min-height: 108px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,0.14);
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      font-weight: 700;
+      padding: 14px;
+    }
+
+    .footer {
+      padding: 36px 0 56px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1060px) {
+      .hero-grid, .grid-3 { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .hero-shell { border-radius: 24px; }
+    }
+
+    @media (max-width: 720px) {
+      .container { width: min(var(--max), calc(100vw - 20px)); }
+      .topbar { top: 10px; }
+      .topbar-inner { width: calc(100vw - 20px); padding: 12px 14px; border-radius: 18px; }
+      .nav { display: none; }
+      .hero-grid { min-height: calc(75svh - 108px); padding: 24px; }
+      .hero-video-placeholder { opacity: .28; }
+      .stats { grid-template-columns: 1fr; }
+      h1 { font-size: 46px; }
+      .hero { min-height: calc(75svh - 64px); padding-top: 0; }
+      .hero-shell { min-height: calc(75svh - 84px); }
+      .hero-minimal { width: min(100%, 620px); }
+      .hero-minimal h1 { font-size: clamp(36px, 11vw, 56px); max-width: 11ch; }
+      .hero-meta { flex-direction: column; width: 100%; align-items: stretch; }
+      .hero-meta .pill { justify-content: center; }
+      .hero-actions { display: flex; flex-direction: column; width: 100%; gap: 12px; }
+      .hero-actions .btn { width: 100%; margin: 0; }
+      .section-head { align-items: start; flex-direction: column; text-align: left; }
+      form#subscribe-form > div { flex-direction: column; width: 100%; gap: 12px; }
+      form#subscribe-form .btn { width: 100%; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand"><span class="brand-dot"></span> Vibe Code Cup</div>
+      <div class="nav">
+        <a href="#format">Format</a>
+        <a href="/apply-competitor.html">Register</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#faq">FAQ</a>
+        <a href="/apply-competitor.html" class="btn btn-primary" style="min-height:40px;padding:0 14px;">Register</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-shell" style="width:100%;">
+        <div class="hero-video-placeholder"></div>
+        <div class="hero-grid">
+          <div class="hero-minimal">
+            <div class="eyebrow">Elite builders • Timed challenge • Hard reveal at kickoff</div>
+            <h1>Vibe Code Cup</h1>
+            <div class="hero-meta" style="justify-content: center; gap: 16px; margin-top: 0px;">
+              <div class="pill" style="border-color: rgba(139, 255, 176, 0.3); color: var(--accent);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                April 11, 2026 @ 10:00 AM PT
+              </div>
+              <div class="pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                SF + Online
+              </div>
+            </div>
+            <div class="hero-actions" style="margin-top: 8px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+              <a href="/apply-competitor.html" class="btn btn-primary">Register to compete</a>
+              <a href="#watch" class="btn btn-secondary">Get notified</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sponsors" class="section container">
+      <div class="section-head">
+        <h2>Sponsors</h2>
+      </div>
+      <div class="sponsor-marquee">
+        <div class="sponsor-track">
+          <!-- First set of sponsors -->
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Title Sponsor</div></div>
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Prize Partner</div></div>
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Broadcast Partner</div></div>
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Tools Partner</div></div>
+          <!-- Duplicate set for seamless looping -->
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Title Sponsor</div></div>
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Prize Partner</div></div>
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Broadcast Partner</div></div>
+          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Tools Partner</div></div>
+        </div>
+      </div>
+      <div style="text-align: center; display: flex; justify-content: center; width: 100%;">
+        <div class="sponsor-action" style="max-width: 400px; width: 100%;">
+          <a href="/apply-sponsor.html" class="btn btn-secondary" style="width: 100%;">Become a Sponsor</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <div class="section-head">
+        <h2>What this is</h2>
+        <p class="section-lead">A premium, builder-first AI coding competition that feels credible to top technical builders, attractive to sponsors, and compelling to watch live.</p>
+      </div>
+      <div class="grid-3">
+        <div class="feature">
+          <div class="section-label">01 / The Premise</div>
+          <h3>Technical credibility</h3>
+          <p>Not just a hidden LeetCode test. A format that surfaces strong builders and their authentic workflows under real pressure, culminating in a live streamed showdown.</p>
+        </div>
+        <div class="feature">
+          <div class="section-label">02 / The Rules</div>
+          <h3>All tools allowed</h3>
+          <p>Bring whatever tools you trust. You have 90 minutes to build and submit once the secret challenge is revealed at kickoff. Final submissions must run standalone.</p>
+        </div>
+        <div class="feature">
+          <div class="section-label">03 / The Stakes</div>
+          <h3>$1,000+ Prize Pool</h3>
+          <p>Compete for a share of a growing cash prize pool, plus exclusive premium developer tools and sponsor hardware.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="enter" class="section container">
+      <div class="section-head" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
+        <h2>Open Registration</h2>
+        <p class="section-lead">Registration is fully open to builders who want to show what software looks like next. Bring your tools, show your workflow, and build under pressure.</p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 32px;">
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <h3 style="font-size: 20px; color: var(--text);">Clear workflows</h3>
+          <p style="font-size: 15px;">We want to see how you build, debug, and ship when the clock is ticking.</p>
+        </div>
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <h3 style="font-size: 20px; color: var(--text);">Interesting tool stacks</h3>
+          <p style="font-size: 15px;">Cursor, Windsurf, pure Vim, or something custom. Use what makes you fastest.</p>
+        </div>
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <h3 style="font-size: 20px; color: var(--text);">Ship-ready taste</h3>
+          <p style="font-size: 15px;">It has to work, but it also has to look good. We index high on execution quality.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; display: flex; justify-content: center; width: 100%;">
+        <div class="register-action" style="max-width: 400px; width: 100%;">
+          <a href="/apply-competitor.html" class="btn btn-primary" style="padding: 0 32px; font-size: 16px; width: 100%;">Register Now</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="format" class="section container">
+      <div class="section-head">
+        <h2>Format</h2>
+        <p class="section-lead">One reveal. One clock. Real software under pressure.</p>
+      </div>
+      <div class="grid-3">
+        <div class="feature">
+          <div class="section-label">01</div>
+          <h3>Kickoff</h3>
+          <p>The challenge is revealed live at kickoff. No advance prep.</p>
+        </div>
+        <div class="feature">
+          <div class="section-label">02</div>
+          <h3>Sprint</h3>
+          <p>Bring whatever tools you trust. You have 90 minutes to build, test, and submit.</p>
+        </div>
+        <div class="feature">
+          <div class="section-label">03</div>
+          <h3>Finale</h3>
+          <p>Results are revealed same-day on an entertaining live stream, featuring post-match analysis and athlete interviews.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="watch" class="section container">
+      <div class="section-head" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
+        <h2>For viewers</h2>
+        <p class="section-lead">Watch the challenge drop, the leaderboard move, and the top entries fight for the win.</p>
+      </div>
+      <div class="grid-3" style="margin-bottom: 32px;">
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <div class="section-label">Watch</div>
+          <h3 style="font-size: 20px; color: var(--text);">Challenge reveal</h3>
+          <p style="font-size: 15px;">The moment everyone sees the problem for the first time.</p>
+        </div>
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <div class="section-label">Watch</div>
+          <h3 style="font-size: 20px; color: var(--text);">Workflow on display</h3>
+          <p style="font-size: 15px;">See what workflows and tools are actually effective, and what the future of competitive coding looks like with AI.</p>
+        </div>
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <div class="section-label">Watch</div>
+          <h3 style="font-size: 20px; color: var(--text);">Final showdown</h3>
+          <p style="font-size: 15px;">Entertaining live results, post-match analysis, and athlete interviews with the top builders.</p>
+        </div>
+      </div>
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <form id="subscribe-form" style="max-width: 400px; width: 100%;">
+          <div style="display: flex; gap: 8px; width: 100%; flex-wrap: wrap;">
+            <input type="email" name="email" placeholder="you@example.com" required style="flex-grow: 1; min-width: 0;" />
+            <button class="btn btn-primary" type="submit" style="flex-shrink: 0; min-height: 52px; padding: 0 24px; margin: 0;">Notify me</button>
+          </div>
+        </form>
+        <div id="subscribe-status" class="tiny" style="min-height: 18px;"></div>
+      </div>
+    </section>
+
+
+
+    <section id="faq" class="section container">
+      <div class="section-head">
+        <h2>Quick answers</h2>
+        <p class="section-lead">Simple enough for the audience. Serious enough for the builders.</p>
+      </div>
+      <div class="grid-3">
+        <div class="faq">
+          <h3>What do competitors win?</h3>
+          <p>We are starting with a base $1,000+ cash prize pool alongside exclusive developer gear and tools. More importantly: bragging rights and exposure in front of top technical operators.</p>
+        </div>
+        <div class="faq">
+          <h3>Do competitors know the challenge?</h3>
+          <p>No. The challenge is disclosed only at kickoff.</p>
+        </div>
+        <div class="faq">
+          <h3>What tools are allowed?</h3>
+          <p>All tools are allowed during the build. Final submissions still need to stand on their own.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">Vibe Code Cup • premium builder competition</footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const subscribeForm = document.getElementById('subscribe-form');
+      if (subscribeForm) {
+        subscribeForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const statusDiv = document.getElementById('subscribe-status');
+          const submitBtn = subscribeForm.querySelector('button[type="submit"]');
+
+          statusDiv.style.color = 'var(--muted)';
+          statusDiv.textContent = 'Subscribing...';
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.7';
+
+          const formData = new FormData(subscribeForm);
+          const data = {
+            email: formData.get('email')
+          };
+
+          try {
+            const response = await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              statusDiv.style.color = 'var(--accent)';
+              statusDiv.textContent = 'Success! You will be notified.';
+              subscribeForm.reset();
+            } else {
+              statusDiv.style.color = '#ff7272';
+              statusDiv.textContent = result.error || 'Something went wrong. Please try again.';
+            }
+          } catch (err) {
+            statusDiv.style.color = '#ff7272';
+            statusDiv.textContent = 'Failed to connect. Please try again later.';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
