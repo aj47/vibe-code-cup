@@ -994,6 +994,7 @@
       const debugCanvas = document.getElementById('trophy-debug-canvas');
       const diffCanvas = document.getElementById('trophy-diff-canvas');
       const trophyDebug = ['1', 'true', 'yes', 'on'].includes((new URLSearchParams(window.location.search).get('trophyDebug') || '').toLowerCase());
+      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       const bayerMatrix = [
         [0, 8, 2, 10],
         [12, 4, 14, 6],
@@ -1070,6 +1071,13 @@
         for (let y = 0; y < sourceImage.height; y += 1) {
           for (let x = 0; x < sourceImage.width; x += 1) {
             const index = ((y * sourceImage.width) + x) * 4;
+            if (sourceData[index + 3] === 0) {
+              outputData[index] = 0;
+              outputData[index + 1] = 0;
+              outputData[index + 2] = 0;
+              outputData[index + 3] = 0;
+              continue;
+            }
             const threshold = ((bayerMatrix[y % 4][x % 4] / 15) - 0.5) * strength;
             const color = nearestColor(
               clamp(sourceData[index] + threshold, 0, 255),
@@ -1184,12 +1192,6 @@
         const shimmerX = 40 + (((Math.sin(time * 1.5) + 1) / 2) * 26);
         const shimmerAlpha = 0.16 + (((Math.sin(time * 2.4) + 1) / 2) * 0.16);
         const pedestalPulse = 0.12 + (((Math.sin(time * 2.2) + 1) / 2) * 0.08);
-
-        const bgGradient = ctx.createLinearGradient(0, 0, 0, 128);
-        bgGradient.addColorStop(0, palette.backgroundTop);
-        bgGradient.addColorStop(1, palette.backgroundBottom);
-        ctx.fillStyle = bgGradient;
-        ctx.fillRect(0, 0, 128, 128);
 
         const halo = ctx.createRadialGradient(haloX, haloY, 8, haloX, haloY, 62);
         halo.addColorStop(0, rgba(palette.halo, 0.42));
@@ -1312,41 +1314,48 @@
         drawSpark(ctx, 34 + (Math.sin(time * 1.4) * 1.5), 22, palette.trophySpec, 0.8 + ((((Math.sin(time * 2.6) + 1) / 2)) * 0.5));
         drawSpark(ctx, 94, 18 + (Math.cos(time * 1.2) * 1.5), palette.halo, 0.7 + ((((Math.cos(time * 2.2) + 1) / 2)) * 0.4));
         drawSpark(ctx, 100, 34, palette.trophySpec, 0.5 + ((((Math.sin(time * 3.1) + 1) / 2)) * 0.4));
-
-        const vignette = ctx.createRadialGradient(64, 64, 40, 64, 64, 88);
-        vignette.addColorStop(0.68, 'rgba(0,0,0,0)');
-        vignette.addColorStop(1, rgba(palette.vignette, 0.56));
-        ctx.fillStyle = vignette;
-        ctx.fillRect(0, 0, 128, 128);
       };
 
       const sourceCanvas = trophyCanvas ? document.createElement('canvas') : null;
       const sourceCtx = sourceCanvas ? sourceCanvas.getContext('2d', { willReadFrequently: true }) : null;
+      const outputCtx = trophyCanvas ? trophyCanvas.getContext('2d', { willReadFrequently: true }) : null;
       const debugCtx = debugCanvas ? debugCanvas.getContext('2d', { willReadFrequently: true }) : null;
       const diffCtx = diffCanvas ? diffCanvas.getContext('2d', { willReadFrequently: true }) : null;
       const diffImage = diffCtx ? diffCtx.createImageData(128, 128) : null;
+      const debugSpriteIntervalMs = 1000 / 20;
+      const debugPanelIntervalMs = 1000 / 6;
+      const reducedMotionSpriteIntervalMs = 1000 / 10;
       if (sourceCanvas) {
         sourceCanvas.width = 128;
         sourceCanvas.height = 128;
+      }
+      if (outputCtx) {
+        outputCtx.imageSmoothingEnabled = false;
       }
 
       let faviconApplied = false;
       let previousProcessedFrame = null;
       let renderedFrameCount = 0;
+      let lastDebugSampleAt = Number.NEGATIVE_INFINITY;
 
       const renderTrophy = (timestamp = 0) => {
-        if (!trophyCanvas) return;
+        if (!trophyCanvas || !outputCtx) return;
 
-        const outputCtx = trophyCanvas.getContext('2d', { willReadFrequently: true });
         const time = timestamp / 1000;
-        outputCtx.imageSmoothingEnabled = false;
 
         renderSpriteSource(sourceCtx, palette, time);
         const processed = quantizeOrdered(sourceCtx.getImageData(0, 0, 128, 128));
         animatePixelAccents(processed, time);
         outputCtx.putImageData(processed, 0, 0);
 
-        if (trophyDebug && debugCtx && diffCtx && diffImage) {
+        const shouldRefreshDebug = trophyDebug
+          && debugCtx
+          && diffCtx
+          && diffImage
+          && ((timestamp - lastDebugSampleAt) >= debugPanelIntervalMs || previousProcessedFrame === null);
+
+        if (shouldRefreshDebug) {
+          lastDebugSampleAt = timestamp;
           debugCtx.putImageData(processed, 0, 0);
           let changedPixels = 0;
           const currentFrame = processed.data;
@@ -1384,7 +1393,7 @@
             debugChip.textContent = changedPixels > 0 ? `${changedPixels} px / frame` : '0 px / frame';
           }
           if (debugMeta) {
-            debugMeta.textContent = `frame ${renderedFrameCount} • t=${time.toFixed(2)}s • changed pixels=${changedPixels}\nDebug view removes the ambient mask and boosts opacity so we can separate sprite animation from hero styling.`;
+            debugMeta.textContent = `frame ${renderedFrameCount} • t=${time.toFixed(2)}s • changed pixels=${changedPixels}\n${reducedMotionQuery.matches ? 'Reduced motion is enabled, so debug mode keeps the hero motion mostly static while still advancing sprite frames for inspection.' : 'Debug view removes the ambient mask and boosts opacity so we can separate sprite animation from hero styling.'} Debug previews are sampled at a lower rate to keep this mode lighter.`;
           }
           previousProcessedFrame = new Uint8ClampedArray(currentFrame);
           renderedFrameCount += 1;
@@ -1397,7 +1406,9 @@
       };
 
       const setupTrophyMotion = () => {
-        if (!heroShell || !trophyDisplay || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (!heroShell || !trophyDisplay) return;
+
+        const reducedMotion = reducedMotionQuery.matches;
 
         const motion = {
           currentX: 0.5,
@@ -1406,6 +1417,7 @@
           targetY: 0.46,
           visible: true,
           startedAt: performance.now(),
+          lastSpriteRenderAt: Number.NEGATIVE_INFINITY,
           raf: null
         };
 
@@ -1414,7 +1426,33 @@
 
           motion.currentX += (motion.targetX - motion.currentX) * 0.045;
           motion.currentY += (motion.targetY - motion.currentY) * 0.045;
-          renderTrophy(timestamp);
+          const spriteIntervalMs = trophyDebug
+            ? debugSpriteIntervalMs
+            : reducedMotion
+              ? reducedMotionSpriteIntervalMs
+              : 0;
+          const shouldRenderSprite = spriteIntervalMs === 0 || (timestamp - motion.lastSpriteRenderAt) >= spriteIntervalMs;
+          if (shouldRenderSprite) {
+            renderTrophy(timestamp);
+            motion.lastSpriteRenderAt = timestamp;
+          }
+
+          if (reducedMotion) {
+            trophyDisplay.style.setProperty('--tilt-x', '0deg');
+            trophyDisplay.style.setProperty('--tilt-y', '0deg');
+            trophyDisplay.style.setProperty('--float-y', '0px');
+            trophyDisplay.style.setProperty('--parallax-x', '0px');
+            trophyDisplay.style.setProperty('--parallax-y', '0px');
+            trophyDisplay.style.setProperty('--glow-x', '50%');
+            trophyDisplay.style.setProperty('--glow-y', '46%');
+            trophyDisplay.style.setProperty('--scan-shift', '0px');
+            trophyDisplay.style.setProperty('--ambient-pulse', '0.55');
+
+            if (motion.visible && !document.hidden) {
+              motion.raf = window.requestAnimationFrame(applyMotion);
+            }
+            return;
+          }
 
           const idleTime = (timestamp - motion.startedAt) / 1000;
           const idleDriftX = Math.sin(idleTime * 0.72) * 2.6;
@@ -1456,18 +1494,20 @@
           motion.raf = window.requestAnimationFrame(applyMotion);
         };
 
-        heroShell.addEventListener('mousemove', (event) => {
-          const rect = heroShell.getBoundingClientRect();
-          motion.targetX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-          motion.targetY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-          ensureLoop();
-        });
+        if (!reducedMotion) {
+          heroShell.addEventListener('mousemove', (event) => {
+            const rect = heroShell.getBoundingClientRect();
+            motion.targetX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+            motion.targetY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+            ensureLoop();
+          });
 
-        heroShell.addEventListener('mouseleave', () => {
-          motion.targetX = 0.5;
-          motion.targetY = 0.46;
-          ensureLoop();
-        });
+          heroShell.addEventListener('mouseleave', () => {
+            motion.targetX = 0.5;
+            motion.targetY = 0.46;
+            ensureLoop();
+          });
+        }
 
         window.addEventListener('scroll', ensureLoop, { passive: true });
         window.addEventListener('resize', ensureLoop);
