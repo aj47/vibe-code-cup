@@ -456,6 +456,112 @@
       opacity: calc(0.64 + (var(--ambient-pulse) * 0.12));
     }
 
+    .trophy-debug-panel {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      z-index: 4;
+      width: min(380px, calc(100% - 36px));
+      display: none;
+      gap: 12px;
+      padding: 14px;
+      text-align: left;
+    }
+
+    .trophy-debug-enabled .trophy-debug-panel {
+      display: grid;
+    }
+
+    .trophy-debug-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .trophy-debug-head strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .trophy-debug-chip {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(114,255,152,0.22);
+      background: rgba(114,255,152,0.08);
+      color: var(--accent-soft);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .trophy-debug-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trophy-debug-view {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trophy-debug-view strong {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .trophy-debug-view canvas {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid rgba(114,255,152,0.14);
+      background: linear-gradient(180deg, rgba(8,14,11,0.98), rgba(3,5,4,0.98));
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .trophy-debug-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .trophy-debug-enabled .hero-trophy-bg {
+      opacity: 0.66;
+      filter: saturate(1.28) contrast(1.08);
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+
+    .trophy-debug-enabled .hero-trophy-bg::before {
+      opacity: 0.6;
+    }
+
+    .trophy-debug-enabled .hero-trophy-bg::after {
+      opacity: 0.32;
+    }
+
+    .trophy-debug-enabled .hero-trophy-stage::before {
+      opacity: 0.34;
+    }
+
+    .trophy-debug-enabled #trophy-canvas {
+      opacity: 0.94;
+    }
+
     .hero-form h3 {
       margin: 4px 0 2px;
       font-size: 28px;
@@ -628,6 +734,13 @@
         transform: translateX(-50%);
         opacity: calc(0.14 + (var(--ambient-pulse) * 0.05));
       }
+      .trophy-debug-panel {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        width: auto;
+      }
+      .trophy-debug-grid { grid-template-columns: 1fr; }
       .section-head { align-items: start; flex-direction: column; text-align: left; }
       form#subscribe-form > div { flex-direction: column; width: 100%; gap: 12px; }
       form#subscribe-form .btn { width: 100%; margin: 0; }
@@ -665,6 +778,26 @@
           <div class="hero-trophy-stage">
             <canvas id="trophy-canvas" width="128" height="128" aria-hidden="true"></canvas>
           </div>
+        </div>
+        <div class="trophy-debug-panel panel panel-strong" id="trophy-debug-panel" hidden>
+          <div class="trophy-debug-head">
+            <div>
+              <div class="section-label">Animation debug</div>
+              <strong>`?trophyDebug=1` active</strong>
+            </div>
+            <span class="trophy-debug-chip" id="trophy-debug-chip">waiting</span>
+          </div>
+          <div class="trophy-debug-grid">
+            <div class="trophy-debug-view">
+              <strong>Live sprite</strong>
+              <canvas id="trophy-debug-canvas" width="128" height="128" aria-hidden="true"></canvas>
+            </div>
+            <div class="trophy-debug-view">
+              <strong>Changed pixels</strong>
+              <canvas id="trophy-diff-canvas" width="128" height="128" aria-hidden="true"></canvas>
+            </div>
+          </div>
+          <div class="trophy-debug-meta" id="trophy-debug-meta">Debug mode boosts visibility and shows a per-frame diff so we can see whether the sprite is truly animating.</div>
         </div>
         <div class="hero-grid">
           <div class="hero-minimal">
@@ -855,12 +988,23 @@
       const trophyDisplay = document.getElementById('trophy-display');
       const trophyCanvas = document.getElementById('trophy-canvas');
       const faviconLink = document.getElementById('site-favicon');
+      const debugPanel = document.getElementById('trophy-debug-panel');
+      const debugChip = document.getElementById('trophy-debug-chip');
+      const debugMeta = document.getElementById('trophy-debug-meta');
+      const debugCanvas = document.getElementById('trophy-debug-canvas');
+      const diffCanvas = document.getElementById('trophy-diff-canvas');
+      const trophyDebug = ['1', 'true', 'yes', 'on'].includes((new URLSearchParams(window.location.search).get('trophyDebug') || '').toLowerCase());
       const bayerMatrix = [
         [0, 8, 2, 10],
         [12, 4, 14, 6],
         [3, 11, 1, 9],
         [15, 7, 13, 5]
       ];
+
+      if (trophyDebug) {
+        document.body.classList.add('trophy-debug-enabled');
+        if (debugPanel) debugPanel.hidden = false;
+      }
 
       const palette = {
         label: 'phosphor',
@@ -980,8 +1124,66 @@
         ctx.restore();
       };
 
-      const renderSpriteSource = (ctx, palette) => {
+      const setPixelBlock = (imageData, x, y, size, color, alpha = 255) => {
+        for (let offsetY = 0; offsetY < size; offsetY += 1) {
+          for (let offsetX = 0; offsetX < size; offsetX += 1) {
+            const pixelX = x + offsetX;
+            const pixelY = y + offsetY;
+            if (pixelX < 0 || pixelX >= imageData.width || pixelY < 0 || pixelY >= imageData.height) continue;
+            const index = ((pixelY * imageData.width) + pixelX) * 4;
+            imageData.data[index] = color.r;
+            imageData.data[index + 1] = color.g;
+            imageData.data[index + 2] = color.b;
+            imageData.data[index + 3] = alpha;
+          }
+        }
+      };
+
+      const animatePixelAccents = (imageData, time) => {
+        const spec = hexToRgb(palette.trophySpec);
+        const light = hexToRgb(palette.trophyLight);
+        const glow = hexToRgb(palette.halo);
+        const lipPixels = [[41, 28], [48, 27], [56, 27], [64, 27], [72, 27], [80, 28]];
+        const basePixels = [[41, 99], [49, 99], [57, 99], [65, 99], [73, 99], [81, 99]];
+        const stemPixels = [[61, 68], [61, 73], [61, 78], [61, 83]];
+        const frame = Math.floor(time * 8);
+
+        [lipPixels[frame % lipPixels.length], lipPixels[(frame + 2) % lipPixels.length]].forEach(([x, y], index) => {
+          setPixelBlock(imageData, x, y, 2, index === 0 ? spec : light, 255);
+        });
+
+        if ((Math.floor(time * 6) % 4) !== 1) {
+          const [x, y] = basePixels[Math.floor(time * 6) % basePixels.length];
+          setPixelBlock(imageData, x, y, 2, light, 255);
+        }
+
+        if (Math.sin(time * 3.4) > -0.15) {
+          const [x, y] = stemPixels[Math.floor(time * 7) % stemPixels.length];
+          setPixelBlock(imageData, x, y, 2, spec, 255);
+        }
+
+        const sweepX = 46 + Math.floor(((Math.sin(time * 1.9) + 1) / 2) * 16);
+        for (let step = 0; step < 4; step += 1) {
+          setPixelBlock(imageData, sweepX + (step * 2), 84 + (step % 2), 1, glow, 220);
+        }
+
+        if (Math.sin(time * 2.8) > 0.35) {
+          setPixelBlock(imageData, 33, 21, 2, spec, 255);
+        }
+
+        if (Math.cos(time * 3.1) > 0.25) {
+          setPixelBlock(imageData, 96, 18, 2, glow, 255);
+        }
+      };
+
+      const renderSpriteSource = (ctx, palette, time = 0) => {
         ctx.clearRect(0, 0, 128, 128);
+
+        const haloX = 64 + (Math.sin(time * 0.9) * 3.5);
+        const haloY = 54 + (Math.cos(time * 0.7) * 2.5);
+        const shimmerX = 40 + (((Math.sin(time * 1.5) + 1) / 2) * 26);
+        const shimmerAlpha = 0.16 + (((Math.sin(time * 2.4) + 1) / 2) * 0.16);
+        const pedestalPulse = 0.12 + (((Math.sin(time * 2.2) + 1) / 2) * 0.08);
 
         const bgGradient = ctx.createLinearGradient(0, 0, 0, 128);
         bgGradient.addColorStop(0, palette.backgroundTop);
@@ -989,19 +1191,21 @@
         ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, 128, 128);
 
-        const halo = ctx.createRadialGradient(64, 54, 8, 64, 54, 62);
+        const halo = ctx.createRadialGradient(haloX, haloY, 8, haloX, haloY, 62);
         halo.addColorStop(0, rgba(palette.halo, 0.42));
         halo.addColorStop(0.36, rgba(palette.haloSoft, 0.34));
         halo.addColorStop(1, rgba(palette.backgroundBottom, 0));
         ctx.fillStyle = halo;
         ctx.fillRect(0, 0, 128, 128);
 
-        ctx.strokeStyle = rgba(palette.ray, 0.22);
         ctx.lineWidth = 3;
         for (let ray = 0; ray < 12; ray += 1) {
           const angle = (Math.PI * 2 * ray) / 12;
           const inner = 20;
-          const outer = ray % 2 === 0 ? 52 : 44;
+          const outerBase = ray % 2 === 0 ? 52 : 44;
+          const outer = outerBase + (Math.sin((time * 1.8) + (ray * 0.7)) * 3.5);
+          const alpha = 0.12 + ((((Math.sin((time * 1.4) + (ray * 0.8)) + 1) / 2)) * 0.2);
+          ctx.strokeStyle = rgba(palette.ray, alpha);
           ctx.beginPath();
           ctx.moveTo(64 + (Math.cos(angle) * inner), 48 + (Math.sin(angle) * inner));
           ctx.lineTo(64 + (Math.cos(angle) * outer), 48 + (Math.sin(angle) * outer));
@@ -1017,7 +1221,7 @@
         drawLaurel(ctx, 25, 56, 1, palette.leaf);
         drawLaurel(ctx, 103, 56, -1, palette.leaf);
 
-        ctx.fillStyle = rgba(palette.halo, 0.16);
+        ctx.fillStyle = rgba(palette.halo, 0.12 + pedestalPulse);
         ctx.beginPath();
         ctx.ellipse(64, 102, 32, 8, 0, 0, Math.PI * 2);
         ctx.fill();
@@ -1080,6 +1284,11 @@
         ctx.closePath();
         ctx.fill();
 
+        ctx.fillStyle = rgba(palette.trophySpec, shimmerAlpha);
+        ctx.fillRect(shimmerX, 32, 6, 34);
+        ctx.fillStyle = rgba(palette.halo, shimmerAlpha * 0.7);
+        ctx.fillRect(shimmerX + 2, 80, 8, 12);
+
         ctx.fillStyle = palette.trophyMid;
         ctx.fillRect(57, 64, 14, 18);
         ctx.fillStyle = palette.trophySpec;
@@ -1100,9 +1309,9 @@
         ctx.lineTo(78, 85);
         ctx.stroke();
 
-        drawSpark(ctx, 34, 22, palette.trophySpec, 1);
-        drawSpark(ctx, 94, 18, palette.halo, 0.85);
-        drawSpark(ctx, 100, 34, palette.trophySpec, 0.7);
+        drawSpark(ctx, 34 + (Math.sin(time * 1.4) * 1.5), 22, palette.trophySpec, 0.8 + ((((Math.sin(time * 2.6) + 1) / 2)) * 0.5));
+        drawSpark(ctx, 94, 18 + (Math.cos(time * 1.2) * 1.5), palette.halo, 0.7 + ((((Math.cos(time * 2.2) + 1) / 2)) * 0.4));
+        drawSpark(ctx, 100, 34, palette.trophySpec, 0.5 + ((((Math.sin(time * 3.1) + 1) / 2)) * 0.4));
 
         const vignette = ctx.createRadialGradient(64, 64, 40, 64, 64, 88);
         vignette.addColorStop(0.68, 'rgba(0,0,0,0)');
@@ -1111,22 +1320,79 @@
         ctx.fillRect(0, 0, 128, 128);
       };
 
-      const renderTrophy = () => {
+      const sourceCanvas = trophyCanvas ? document.createElement('canvas') : null;
+      const sourceCtx = sourceCanvas ? sourceCanvas.getContext('2d', { willReadFrequently: true }) : null;
+      const debugCtx = debugCanvas ? debugCanvas.getContext('2d', { willReadFrequently: true }) : null;
+      const diffCtx = diffCanvas ? diffCanvas.getContext('2d', { willReadFrequently: true }) : null;
+      const diffImage = diffCtx ? diffCtx.createImageData(128, 128) : null;
+      if (sourceCanvas) {
+        sourceCanvas.width = 128;
+        sourceCanvas.height = 128;
+      }
+
+      let faviconApplied = false;
+      let previousProcessedFrame = null;
+      let renderedFrameCount = 0;
+
+      const renderTrophy = (timestamp = 0) => {
         if (!trophyCanvas) return;
 
         const outputCtx = trophyCanvas.getContext('2d', { willReadFrequently: true });
-        const sourceCanvas = document.createElement('canvas');
-        sourceCanvas.width = 128;
-        sourceCanvas.height = 128;
-        const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+        const time = timestamp / 1000;
         outputCtx.imageSmoothingEnabled = false;
 
-        renderSpriteSource(sourceCtx, palette);
+        renderSpriteSource(sourceCtx, palette, time);
         const processed = quantizeOrdered(sourceCtx.getImageData(0, 0, 128, 128));
+        animatePixelAccents(processed, time);
         outputCtx.putImageData(processed, 0, 0);
 
-        if (faviconLink) {
+        if (trophyDebug && debugCtx && diffCtx && diffImage) {
+          debugCtx.putImageData(processed, 0, 0);
+          let changedPixels = 0;
+          const currentFrame = processed.data;
+
+          for (let index = 0; index < currentFrame.length; index += 4) {
+            const hasPixel = currentFrame[index + 3] > 0;
+            const previousIndexChanged = previousProcessedFrame
+              ? Math.abs(currentFrame[index] - previousProcessedFrame[index])
+                + Math.abs(currentFrame[index + 1] - previousProcessedFrame[index + 1])
+                + Math.abs(currentFrame[index + 2] - previousProcessedFrame[index + 2])
+              : 0;
+            const changed = previousProcessedFrame ? previousIndexChanged > 24 : false;
+
+            if (changed) {
+              changedPixels += 1;
+              diffImage.data[index] = renderedFrameCount % 2 === 0 ? 255 : 90;
+              diffImage.data[index + 1] = 32;
+              diffImage.data[index + 2] = 255;
+              diffImage.data[index + 3] = 255;
+            } else if (hasPixel) {
+              diffImage.data[index] = 4;
+              diffImage.data[index + 1] = 44;
+              diffImage.data[index + 2] = 18;
+              diffImage.data[index + 3] = 170;
+            } else {
+              diffImage.data[index] = 0;
+              diffImage.data[index + 1] = 0;
+              diffImage.data[index + 2] = 0;
+              diffImage.data[index + 3] = 0;
+            }
+          }
+
+          diffCtx.putImageData(diffImage, 0, 0);
+          if (debugChip) {
+            debugChip.textContent = changedPixels > 0 ? `${changedPixels} px / frame` : '0 px / frame';
+          }
+          if (debugMeta) {
+            debugMeta.textContent = `frame ${renderedFrameCount} • t=${time.toFixed(2)}s • changed pixels=${changedPixels}\nDebug view removes the ambient mask and boosts opacity so we can separate sprite animation from hero styling.`;
+          }
+          previousProcessedFrame = new Uint8ClampedArray(currentFrame);
+          renderedFrameCount += 1;
+        }
+
+        if (faviconLink && !faviconApplied) {
           faviconLink.href = `${palette.favicon}?v=${palette.label}-ordered`;
+          faviconApplied = true;
         }
       };
 
@@ -1148,6 +1414,7 @@
 
           motion.currentX += (motion.targetX - motion.currentX) * 0.045;
           motion.currentY += (motion.targetY - motion.currentY) * 0.045;
+          renderTrophy(timestamp);
 
           const idleTime = (timestamp - motion.startedAt) / 1000;
           const idleDriftX = Math.sin(idleTime * 0.72) * 2.6;
@@ -1215,7 +1482,7 @@
         ensureLoop();
       };
 
-      renderTrophy();
+      renderTrophy(performance.now());
       setupTrophyMotion();
 
       const subscribeForm = document.getElementById('subscribe-form');
