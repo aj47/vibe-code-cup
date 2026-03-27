@@ -984,6 +984,10 @@
   <footer class="footer container">Vibe Code Cup • premium builder competition</footer>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const trophyRuntimeKey = '__vccTrophyHeroRuntime';
+      if (window[trophyRuntimeKey]?.initialized) return;
+      window[trophyRuntimeKey] = { initialized: true };
+
       const heroShell = document.querySelector('.hero-shell');
       const trophyDisplay = document.getElementById('trophy-display');
       const trophyCanvas = document.getElementById('trophy-canvas');
@@ -1062,8 +1066,8 @@
         return best;
       };
 
-      const quantizeOrdered = (sourceImage) => {
-        const result = new ImageData(sourceImage.width, sourceImage.height);
+      const quantizeOrdered = (sourceImage, targetImage = null) => {
+        const result = targetImage || new ImageData(sourceImage.width, sourceImage.height);
         const sourceData = sourceImage.data;
         const outputData = result.data;
         const strength = 22;
@@ -1322,6 +1326,9 @@
       const debugCtx = debugCanvas ? debugCanvas.getContext('2d', { willReadFrequently: true }) : null;
       const diffCtx = diffCanvas ? diffCanvas.getContext('2d', { willReadFrequently: true }) : null;
       const diffImage = diffCtx ? diffCtx.createImageData(128, 128) : null;
+      const processedFrame = outputCtx ? outputCtx.createImageData(128, 128) : null;
+      const motionFrameIntervalMs = 1000 / 30;
+      const mainSpriteIntervalMs = 1000 / 30;
       const debugSpriteIntervalMs = 1000 / 20;
       const debugPanelIntervalMs = 1000 / 6;
       const reducedMotionSpriteIntervalMs = 1000 / 10;
@@ -1339,12 +1346,12 @@
       let lastDebugSampleAt = Number.NEGATIVE_INFINITY;
 
       const renderTrophy = (timestamp = 0) => {
-        if (!trophyCanvas || !outputCtx) return;
+        if (!trophyCanvas || !outputCtx || !processedFrame) return;
 
         const time = timestamp / 1000;
 
         renderSpriteSource(sourceCtx, palette, time);
-        const processed = quantizeOrdered(sourceCtx.getImageData(0, 0, 128, 128));
+        const processed = quantizeOrdered(sourceCtx.getImageData(0, 0, 128, 128), processedFrame);
         animatePixelAccents(processed, time);
         outputCtx.putImageData(processed, 0, 0);
 
@@ -1415,14 +1422,56 @@
           currentY: 0.46,
           targetX: 0.5,
           targetY: 0.46,
+          heroRect: null,
+          viewportCenter: window.innerHeight * 0.5,
+          geometryDirty: true,
           visible: true,
           startedAt: performance.now(),
+          lastFrameAt: Number.NEGATIVE_INFINITY,
           lastSpriteRenderAt: Number.NEGATIVE_INFINITY,
           raf: null
         };
 
+        const refreshHeroMetrics = () => {
+          motion.heroRect = heroShell.getBoundingClientRect();
+          motion.viewportCenter = window.innerHeight * 0.5;
+          motion.geometryDirty = false;
+        };
+
+        const advanceInterval = (timestamp, lastTimestamp, intervalMs) => {
+          if (intervalMs === 0) {
+            return { shouldAdvance: true, nextTimestamp: timestamp };
+          }
+          if (!Number.isFinite(lastTimestamp)) {
+            return { shouldAdvance: true, nextTimestamp: timestamp };
+          }
+
+          const elapsed = timestamp - lastTimestamp;
+          if (elapsed < intervalMs) {
+            return { shouldAdvance: false, nextTimestamp: lastTimestamp };
+          }
+
+          return {
+            shouldAdvance: true,
+            nextTimestamp: timestamp - (elapsed % intervalMs)
+          };
+        };
+
         const applyMotion = (timestamp) => {
           motion.raf = null;
+
+          const motionStep = advanceInterval(timestamp, motion.lastFrameAt, motionFrameIntervalMs);
+          if (!motionStep.shouldAdvance) {
+            if (motion.visible && !document.hidden) {
+              motion.raf = window.requestAnimationFrame(applyMotion);
+            }
+            return;
+          }
+          motion.lastFrameAt = motionStep.nextTimestamp;
+
+          if (motion.geometryDirty || !motion.heroRect) {
+            refreshHeroMetrics();
+          }
 
           motion.currentX += (motion.targetX - motion.currentX) * 0.045;
           motion.currentY += (motion.targetY - motion.currentY) * 0.045;
@@ -1430,11 +1479,11 @@
             ? debugSpriteIntervalMs
             : reducedMotion
               ? reducedMotionSpriteIntervalMs
-              : 0;
-          const shouldRenderSprite = spriteIntervalMs === 0 || (timestamp - motion.lastSpriteRenderAt) >= spriteIntervalMs;
-          if (shouldRenderSprite) {
+              : mainSpriteIntervalMs;
+          const spriteStep = advanceInterval(timestamp, motion.lastSpriteRenderAt, spriteIntervalMs);
+          if (spriteStep.shouldAdvance) {
             renderTrophy(timestamp);
-            motion.lastSpriteRenderAt = timestamp;
+            motion.lastSpriteRenderAt = spriteStep.nextTimestamp;
           }
 
           if (reducedMotion) {
@@ -1461,10 +1510,8 @@
           const idleTiltY = Math.cos(idleTime * 0.92) * 0.9;
           const pulse = (Math.sin(idleTime * 1.18) + 1) / 2;
 
-          const rect = heroShell.getBoundingClientRect();
-          const viewportCenter = window.innerHeight * 0.5;
-          const heroCenter = rect.top + (rect.height * 0.5);
-          const scrollInfluence = clamp((viewportCenter - heroCenter) / window.innerHeight, -1, 1);
+          const heroCenter = motion.heroRect.top + (motion.heroRect.height * 0.5);
+          const scrollInfluence = clamp((motion.viewportCenter - heroCenter) / window.innerHeight, -1, 1);
           const tiltX = clamp(((0.5 - motion.currentY) * 4.2) + (scrollInfluence * 1.2) + idleTiltX, -5.2, 5.2);
           const tiltY = clamp(((motion.currentX - 0.5) * 5.8) + idleTiltY, -6.2, 6.2);
           const floatY = (scrollInfluence * -7) + idleDriftY;
@@ -1496,7 +1543,10 @@
 
         if (!reducedMotion) {
           heroShell.addEventListener('mousemove', (event) => {
-            const rect = heroShell.getBoundingClientRect();
+            if (motion.geometryDirty || !motion.heroRect) {
+              refreshHeroMetrics();
+            }
+            const rect = motion.heroRect;
             motion.targetX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
             motion.targetY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
             ensureLoop();
@@ -1509,8 +1559,13 @@
           });
         }
 
-        window.addEventListener('scroll', ensureLoop, { passive: true });
-        window.addEventListener('resize', ensureLoop);
+        const invalidateGeometry = () => {
+          motion.geometryDirty = true;
+          ensureLoop();
+        };
+
+        window.addEventListener('scroll', invalidateGeometry, { passive: true });
+        window.addEventListener('resize', invalidateGeometry);
         document.addEventListener('visibilitychange', ensureLoop);
 
         const observer = new IntersectionObserver((entries) => {
