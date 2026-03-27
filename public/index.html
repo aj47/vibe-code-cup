@@ -390,6 +390,11 @@
       -webkit-mask-image: radial-gradient(circle at 54% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.94) 34%, rgba(0,0,0,0.54) 58%, transparent 84%);
     }
 
+    .hero-trophy-bg[data-performance-mode="lite"] {
+      opacity: 0.2;
+      filter: none;
+    }
+
     .hero-trophy-bg::before {
       content: "";
       position: absolute;
@@ -402,6 +407,13 @@
       transform: translate3d(var(--parallax-x), calc(var(--parallax-y) + (var(--float-y) * 0.35)), 0);
       transition: transform 180ms ease-out;
       mix-blend-mode: screen;
+    }
+
+    .hero-trophy-bg[data-performance-mode="lite"]::before {
+      inset: -4%;
+      filter: blur(16px);
+      opacity: 0.18;
+      mix-blend-mode: normal;
     }
 
     .hero-trophy-bg::after {
@@ -418,6 +430,12 @@
       mix-blend-mode: screen;
     }
 
+    .hero-trophy-bg[data-performance-mode="lite"]::after {
+      opacity: 0.05;
+      background-size: 100% 6px, 6px 100%, auto;
+      mix-blend-mode: normal;
+    }
+
     .hero-trophy-stage {
       position: relative;
       display: grid;
@@ -428,6 +446,11 @@
       transform-style: preserve-3d;
       transition: transform 180ms ease-out;
       will-change: transform;
+    }
+
+    .hero-trophy-bg[data-performance-mode="lite"] .hero-trophy-stage {
+      transition: transform 220ms ease-out;
+      will-change: auto;
     }
 
     .hero-trophy-stage::before {
@@ -454,6 +477,11 @@
       image-rendering: crisp-edges;
       filter: drop-shadow(0 36px 72px rgba(0,0,0,0.34)) drop-shadow(0 0 26px rgba(114,255,152,0.14));
       opacity: calc(0.64 + (var(--ambient-pulse) * 0.12));
+    }
+
+    .hero-trophy-bg[data-performance-mode="lite"] #trophy-canvas {
+      filter: drop-shadow(0 24px 44px rgba(0,0,0,0.28));
+      opacity: 0.68;
     }
 
     .trophy-debug-panel {
@@ -997,7 +1025,10 @@
       const debugMeta = document.getElementById('trophy-debug-meta');
       const debugCanvas = document.getElementById('trophy-debug-canvas');
       const diffCanvas = document.getElementById('trophy-diff-canvas');
-      const trophyDebug = ['1', 'true', 'yes', 'on'].includes((new URLSearchParams(window.location.search).get('trophyDebug') || '').toLowerCase());
+      const searchParams = new URLSearchParams(window.location.search);
+      const trophyDebug = ['1', 'true', 'yes', 'on'].includes((searchParams.get('trophyDebug') || '').toLowerCase());
+      const trophyFxMode = (searchParams.get('trophyFx') || '').toLowerCase();
+      const performanceMode = trophyFxMode === 'full' ? 'full' : 'lite';
       const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       const bayerMatrix = [
         [0, 8, 2, 10],
@@ -1009,6 +1040,9 @@
       if (trophyDebug) {
         document.body.classList.add('trophy-debug-enabled');
         if (debugPanel) debugPanel.hidden = false;
+      }
+      if (trophyDisplay) {
+        trophyDisplay.dataset.performanceMode = performanceMode;
       }
 
       const palette = {
@@ -1327,11 +1361,11 @@
       const diffCtx = diffCanvas ? diffCanvas.getContext('2d', { willReadFrequently: true }) : null;
       const diffImage = diffCtx ? diffCtx.createImageData(128, 128) : null;
       const processedFrame = outputCtx ? outputCtx.createImageData(128, 128) : null;
-      const motionFrameIntervalMs = 1000 / 30;
-      const mainSpriteIntervalMs = 1000 / 30;
+      const motionFrameIntervalMs = performanceMode === 'full' ? (1000 / 30) : (1000 / 18);
+      const mainSpriteIntervalMs = performanceMode === 'full' ? (1000 / 30) : (1000 / 12);
       const debugSpriteIntervalMs = 1000 / 20;
       const debugPanelIntervalMs = 1000 / 6;
-      const reducedMotionSpriteIntervalMs = 1000 / 10;
+      const reducedMotionSpriteIntervalMs = 1000 / 6;
       if (sourceCanvas) {
         sourceCanvas.width = 128;
         sourceCanvas.height = 128;
@@ -1504,11 +1538,11 @@
           }
 
           const idleTime = (timestamp - motion.startedAt) / 1000;
-          const idleDriftX = Math.sin(idleTime * 0.72) * 2.6;
-          const idleDriftY = Math.cos(idleTime * 0.48) * 3.2;
-          const idleTiltX = Math.sin(idleTime * 0.84) * 0.7;
-          const idleTiltY = Math.cos(idleTime * 0.92) * 0.9;
-          const pulse = (Math.sin(idleTime * 1.18) + 1) / 2;
+          const idleDriftX = performanceMode === 'full' ? Math.sin(idleTime * 0.72) * 2.6 : Math.sin(idleTime * 0.46) * 0.75;
+          const idleDriftY = performanceMode === 'full' ? Math.cos(idleTime * 0.48) * 3.2 : Math.cos(idleTime * 0.34) * 1.1;
+          const idleTiltX = performanceMode === 'full' ? Math.sin(idleTime * 0.84) * 0.7 : Math.sin(idleTime * 0.42) * 0.18;
+          const idleTiltY = performanceMode === 'full' ? Math.cos(idleTime * 0.92) * 0.9 : Math.cos(idleTime * 0.5) * 0.24;
+          const pulse = performanceMode === 'full' ? ((Math.sin(idleTime * 1.18) + 1) / 2) : (0.5 + (Math.sin(idleTime * 0.6) * 0.08));
 
           const heroCenter = motion.heroRect.top + (motion.heroRect.height * 0.5);
           const scrollInfluence = clamp((motion.viewportCenter - heroCenter) / window.innerHeight, -1, 1);
@@ -1517,9 +1551,11 @@
           const floatY = (scrollInfluence * -7) + idleDriftY;
           const parallaxX = ((motion.currentX - 0.5) * 8) + idleDriftX;
           const parallaxY = ((motion.currentY - 0.5) * 7) + (scrollInfluence * -4) + (idleDriftY * 0.7);
-          const glowX = clamp(motion.currentX + (Math.sin(idleTime * 0.62) * 0.045), 0.16, 0.84);
-          const glowY = clamp(motion.currentY + (Math.cos(idleTime * 0.54) * 0.04), 0.18, 0.84);
-          const scanShift = (scrollInfluence * 12) + (Math.sin(idleTime * 1.44) * 4.5);
+          const glowX = clamp(motion.currentX + (performanceMode === 'full' ? (Math.sin(idleTime * 0.62) * 0.045) : (Math.sin(idleTime * 0.36) * 0.012)), 0.16, 0.84);
+          const glowY = clamp(motion.currentY + (performanceMode === 'full' ? (Math.cos(idleTime * 0.54) * 0.04) : (Math.cos(idleTime * 0.32) * 0.012)), 0.18, 0.84);
+          const scanShift = performanceMode === 'full'
+            ? ((scrollInfluence * 12) + (Math.sin(idleTime * 1.44) * 4.5))
+            : ((scrollInfluence * 2.5) + (Math.sin(idleTime * 0.7) * 0.8));
 
           trophyDisplay.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
           trophyDisplay.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
@@ -1531,7 +1567,9 @@
           trophyDisplay.style.setProperty('--scan-shift', `${scanShift.toFixed(2)}px`);
           trophyDisplay.style.setProperty('--ambient-pulse', pulse.toFixed(3));
 
-          if (motion.visible && !document.hidden) {
+          const shouldContinue = motion.visible && !document.hidden;
+
+          if (shouldContinue) {
             motion.raf = window.requestAnimationFrame(applyMotion);
           }
         };
