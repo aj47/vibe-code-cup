@@ -22,9 +22,12 @@
   <link id="site-favicon" rel="icon" type="image/svg+xml" href="/favicon-trophy-phosphor.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Raleway:wght@500;700&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;500;700&family=Raleway:wght@500;700&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
   <style>
     :root {
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'JetBrains Mono', monospace;
       --bg: #030403;
       --bg-soft: #0a120d;
       --panel: rgba(8, 14, 11, 0.74);
@@ -42,15 +45,21 @@
     }
 
     * { box-sizing: border-box; }
+    h1, h2, h3, h4, h5, h6, .eyebrow {
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
     html { scroll-behavior: smooth; }
     body {
+      font-family: var(--font-body);
+      letter-spacing: -0.02em;
       margin: 0;
       min-height: 100vh;
       background:
         radial-gradient(circle at 50% -10%, rgba(63, 156, 89, 0.18), transparent 28%),
         linear-gradient(180deg, #09100c 0%, #040605 35%, #020302 100%);
       color: var(--text);
-      font-family: "Geist", Inter, system-ui, sans-serif;
       overflow-x: hidden;
     }
 
@@ -86,7 +95,7 @@
       margin: 0 auto;
       padding: 14px 18px;
       border: 1px solid rgba(139, 255, 176, 0.12);
-      border-radius: 22px;
+      border-radius: 0px;
       backdrop-filter: blur(18px);
       background: rgba(5, 10, 7, 0.74);
       box-shadow: 0 12px 40px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.03);
@@ -96,7 +105,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: "Special Gothic Expanded One", sans-serif;
+      font-family: var(--font-display);
       font-size: 18px;
       letter-spacing: 0.01em;
       text-transform: uppercase;
@@ -127,12 +136,15 @@
 
     .nav a:hover { color: var(--text); }
 
+    .nav a.btn-primary { color: #041008; }
+    .nav a.btn-primary:hover { color: #041008; }
+
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 52px;
-      border-radius: 14px;
+      border-radius: 0px;
       padding: 0 18px;
       text-decoration: none;
       font-weight: 700;
@@ -141,7 +153,10 @@
       cursor: pointer;
       text-align: center;
     }
-    .btn:hover { transform: translateY(-1px); }
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0px rgba(114, 255, 152, 0.4);
+    }
     .btn-primary {
       background: var(--accent);
       color: #041008;
@@ -164,7 +179,7 @@
       position: relative;
       isolation: isolate;
       border: 1px solid var(--line);
-      border-radius: 32px;
+      border-radius: 0px;
       overflow: hidden;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
@@ -202,7 +217,7 @@
       align-items: center;
       gap: 10px;
       padding: 10px 14px;
-      border-radius: 999px;
+      border-radius: 0px;
       background: rgba(114,255,152,0.06);
       border: 1px solid rgba(114,255,152,0.12);
       color: #d9e9dd;
@@ -215,7 +230,7 @@
     h1 {
       margin: 18px 0 12px;
       max-width: 980px;
-      font-family: "Special Gothic Expanded One", sans-serif;
+      font-family: var(--font-display);
       font-size: clamp(58px, 7vw, 104px);
       line-height: .93;
       letter-spacing: -0.02em;
@@ -225,7 +240,7 @@
     .lead {
       margin: 0;
       max-width: 620px;
-      font-family: "Raleway", sans-serif;
+      font-family: var(--font-body);
       font-size: clamp(19px, 1.9vw, 25px);
       line-height: 1.32;
       color: #d9e9dd;
@@ -240,7 +255,7 @@
 
     .pill {
       padding: 11px 14px;
-      border-radius: 999px;
+      border-radius: 0px;
       border: 1px solid rgba(255,255,255,0.08);
       background: rgba(255,255,255,0.03);
       color: var(--text);
@@ -270,7 +285,7 @@
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: 0px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
     }
@@ -298,7 +313,7 @@
 
     .stat {
       padding: 16px;
-      border-radius: 18px;
+      border-radius: 0px;
       background: rgba(255,255,255,0.025);
       border: 1px solid rgba(255,255,255,0.06);
     }
@@ -459,7 +474,7 @@
       position: absolute;
       inset: 10% 10% 10% 10%;
       aspect-ratio: 1;
-      border-radius: 32px;
+      border-radius: 0px;
       background:
         radial-gradient(circle at 50% 50%, rgba(114,255,152,0.16), transparent 56%),
         linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
@@ -517,7 +532,7 @@
     .trophy-debug-chip {
       min-height: 28px;
       padding: 0 10px;
-      border-radius: 999px;
+      border-radius: 0px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -554,7 +569,7 @@
       height: auto;
       aspect-ratio: 1;
       display: block;
-      border-radius: 14px;
+      border-radius: 0px;
       border: 1px solid rgba(114,255,152,0.14);
       background: linear-gradient(180deg, rgba(8,14,11,0.98), rgba(3,5,4,0.98));
       image-rendering: pixelated;
@@ -615,7 +630,7 @@
     input, textarea {
       width: 100%;
       border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 14px;
+      border-radius: 0px;
       background: rgba(255,255,255,0.03);
       color: var(--text);
       padding: 14px 14px;
@@ -642,7 +657,7 @@
 
     .section h2 {
       margin: 0;
-      font-family: "Special Gothic Expanded One", sans-serif;
+      font-family: var(--font-display);
       font-size: clamp(28px, 4.2vw, 54px);
       line-height: .98;
       text-transform: uppercase;
@@ -662,70 +677,109 @@
       gap: 16px;
     }
 
-    .linear-flow {
+        .linear-flow {
       display: flex;
       flex-direction: column;
       gap: 16px;
-      max-width: 720px;
+      max-width: 900px;
       margin: 0 auto;
+      position: relative;
+      padding: 40px 0;
+    }
+
+    .linear-flow::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--line-strong);
+      transform: translateX(-50%);
     }
 
     .linear-flow .feature {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0 24px;
-      padding: 24px 32px;
+      width: calc(50% - 40px);
+      position: relative;
+      margin-bottom: 40px;
+      border-radius: 0;
+      display: block;
+      padding: 32px;
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 24px;
+    }
+
+    .linear-flow .feature:nth-child(odd) {
+      margin-left: 0;
+      margin-right: auto;
+      text-align: right;
+    }
+
+    .linear-flow .feature:nth-child(even) {
+      margin-left: auto;
+      margin-right: 0;
       text-align: left;
-      align-items: flex-start;
     }
 
     .linear-flow .section-label {
-      grid-column: 1;
-      grid-row: 1 / span 2;
-      margin-bottom: 0;
+      position: absolute;
+      top: 24px;
       width: 48px;
       height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
+      border-radius: 0;
       background: rgba(114,255,152,0.08);
       color: var(--accent);
       border: 1px solid rgba(114,255,152,0.14);
       font-size: 16px;
       font-weight: 700;
-      padding: 0;
+      margin: 0;
+    }
+
+    .linear-flow .feature:nth-child(odd) .section-label {
+      right: -64px;
+    }
+    .linear-flow .feature:nth-child(even) .section-label {
+      left: -64px;
     }
 
     .linear-flow h3 {
-      grid-column: 2;
-      margin: 0;
-      font-size: 22px;
-      padding-top: 4px;
+      font-size: 24px;
+      margin: 0 0 8px;
     }
-
     .linear-flow p {
-      grid-column: 2;
-      margin: 8px 0 0;
+      margin: 0;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      .linear-flow::before {
+        left: 24px;
+      }
       .linear-flow .feature {
-        padding: 24px;
-        gap: 0 16px;
+        width: calc(100% - 64px) !important;
+        margin-left: 64px !important;
+        margin-right: 0 !important;
+        text-align: left !important;
       }
-      .linear-flow .section-label {
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
+      .linear-flow .feature:nth-child(odd) .section-label,
+      .linear-flow .feature:nth-child(even) .section-label {
+        left: -64px !important;
+        right: auto !important;
       }
     }
 
-    .feature, .faq, .sponsor-box {
+.feature, .faq, .sponsor-box {
       padding: 22px;
+      transition: all 0.2s ease;
+    }
+
+    .feature:hover, .faq:hover {
+      border-color: rgba(114, 255, 152, 0.4);
+      background: rgba(114, 255, 152, 0.02);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0px rgba(114, 255, 152, 0.2);
     }
 
     .feature h3, .faq h3 {
@@ -780,7 +834,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      border-radius: 18px;
+      border-radius: 0px;
       border: 1px dashed rgba(255,255,255,0.14);
       color: var(--muted);
       background: rgba(255,255,255,0.02);
@@ -861,13 +915,13 @@
     @media (max-width: 1060px) {
       .hero-grid, .grid-3 { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(3, 1fr); }
-      .hero-shell { border-radius: 24px; }
+      .hero-shell { border-radius: 0px; }
     }
 
     @media (max-width: 720px) {
       .container { width: min(var(--max), calc(100vw - 20px)); }
       .topbar { top: 10px; }
-      .topbar-inner { width: calc(100vw - 20px); padding: 12px 14px; border-radius: 18px; }
+      .topbar-inner { width: calc(100vw - 20px); padding: 12px 14px; border-radius: 0px; }
       .nav { display: none; }
       .hero-grid { min-height: calc(75svh - 108px); padding: 24px; }
       .hero-video-placeholder { opacity: .28; }
@@ -908,6 +962,16 @@
         transition: none;
         transform: none;
       }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -974,7 +1038,7 @@
     </section>
 
     <section id="sponsors" class="section container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>Sponsors</h2>
       </div>
       <div class="sponsor-marquee">
@@ -1019,22 +1083,22 @@
     </section>
 
     <section class="section container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>What this is</h2>
         <p class="section-lead">A premium, builder-first AI coding competition that feels credible to top technical builders, attractive to sponsors, and compelling to watch live.</p>
       </div>
       <div class="grid-3">
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">01 / The Premise</div>
           <h3>Technical credibility</h3>
           <p>Not just a hidden LeetCode test. A format that surfaces strong builders and their authentic workflows under real pressure, culminating in a live streamed showdown.</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">02 / The Rules</div>
           <h3>All tools allowed</h3>
           <p>Bring whatever tools you trust. You have 90 minutes to build and submit once the secret challenge is revealed at kickoff. Final submissions must run standalone.</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">03 / The Stakes</div>
           <h3>$1,000+ Prize Pool</h3>
           <p>Compete for a share of a growing cash prize pool, plus exclusive premium developer tools and sponsor hardware.</p>
@@ -1043,59 +1107,59 @@
     </section>
 
     <section id="format" class="section container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>How it works</h2>
         <p class="section-lead">Vibe Code Cup is easy to enter and hard to win. Sign up, show up live, get the challenge, build fast, and submit your best work.</p>
       </div>
       <div class="linear-flow">
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">01</div>
           <h3>Sign up and join live</h3>
           <p>Registration is open to anyone. On event day, join the livestream and Discord to get the challenge live with everyone else.</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">02</div>
           <h3>The prompt drops at kickoff</h3>
           <p>No advance prep. The challenge is revealed live, and competitors get the prompt plus a sample submission at the same time.</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">03</div>
           <h3>Bring whatever tools you trust</h3>
           <p>This is a no-holds-barred build competition. AI tools, editors, terminals, design help, custom workflows — whatever makes you fastest.</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">04</div>
           <h3>One build window. One submission.</h3>
           <p>You get one timed window to build and ship your entry, then submit it to the competition GitHub repo. No rounds. No second chances.</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal">
           <div class="section-label">05</div>
           <h3>Tested against the field</h3>
           <p>After submissions close, entries go through a scalable judging process designed to compare them against each other in a way that is serious under the hood and entertaining to follow.</p>
         </div>
       </div>
-      <div class="section-head" style="margin-top: 24px;">
+      <div class="section-head reveal" style="margin-top: 24px;">
         <p class="section-lead">One challenge. One clock. One submission. Then the results go live.</p>
       </div>
 
     </section>
 
     <section id="enter" class="section container">
-      <div class="section-head" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
+      <div class="section-head reveal" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
         <h2>Open Registration</h2>
         <p class="section-lead">Registration is fully open to builders everywhere. Anyone can join online, and we may also host an in-person event in San Francisco alongside it. Bring your tools, show your workflow, and build under pressure.</p>
       </div>
 
       <div class="grid-3" style="margin-bottom: 32px;">
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+        <div class="feature panel reveal" style="background: transparent; border-color: transparent; text-align: center;">
           <h3 style="font-size: 20px; color: var(--text);">Clear workflows</h3>
           <p style="font-size: 15px;">We want to see how you build, debug, and ship when the clock is ticking.</p>
         </div>
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+        <div class="feature panel reveal" style="background: transparent; border-color: transparent; text-align: center;">
           <h3 style="font-size: 20px; color: var(--text);">Interesting tool stacks</h3>
           <p style="font-size: 15px;">Cursor, Windsurf, pure Vim, or something custom. Use what makes you fastest.</p>
         </div>
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+        <div class="feature panel reveal" style="background: transparent; border-color: transparent; text-align: center;">
           <h3 style="font-size: 20px; color: var(--text);">Ship-ready taste</h3>
           <p style="font-size: 15px;">It has to work, but it also has to look good. We index high on execution quality.</p>
         </div>
@@ -1109,22 +1173,22 @@
     </section>
 
     <section id="watch" class="section container">
-      <div class="section-head" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
+      <div class="section-head reveal" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
         <h2>For viewers</h2>
         <p class="section-lead">Watch the challenge drop, the leaderboard move, and the top entries fight for the win.</p>
       </div>
       <div class="grid-3" style="margin-bottom: 32px;">
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+        <div class="feature panel reveal" style="background: transparent; border-color: transparent; text-align: center;">
           <div class="section-label">Watch</div>
           <h3 style="font-size: 20px; color: var(--text);">Challenge reveal</h3>
           <p style="font-size: 15px;">The moment everyone sees the problem for the first time.</p>
         </div>
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+        <div class="feature panel reveal" style="background: transparent; border-color: transparent; text-align: center;">
           <div class="section-label">Watch</div>
           <h3 style="font-size: 20px; color: var(--text);">Workflow on display</h3>
           <p style="font-size: 15px;">See what workflows and tools are actually effective, and what the future of competitive coding looks like with AI.</p>
         </div>
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+        <div class="feature panel reveal" style="background: transparent; border-color: transparent; text-align: center;">
           <div class="section-label">Watch</div>
           <h3 style="font-size: 20px; color: var(--text);">Final showdown</h3>
           <p style="font-size: 15px;">Entertaining live results, post-match analysis, and athlete interviews with the top builders.</p>
@@ -1144,24 +1208,24 @@
 
 
     <section id="faq" class="section container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>Quick answers</h2>
         <p class="section-lead">Simple enough for the audience. Serious enough for the builders.</p>
       </div>
       <div class="grid-3">
-        <div class="faq">
+        <div class="faq reveal">
           <h3>How do I enter?</h3>
           <p>Sign up in advance, then join the livestream and Discord on event day when the challenge goes live.</p>
         </div>
-        <div class="faq">
+        <div class="faq reveal">
           <h3>What happens during the competition?</h3>
           <p>The challenge is revealed live, competitors get the prompt plus a sample submission, and everyone builds against the same clock.</p>
         </div>
-        <div class="faq">
+        <div class="faq reveal">
           <h3>How am I judged?</h3>
           <p>Entries go through a scalable judging process that compares submissions against the field. More details will be shared closer to the event.</p>
         </div>
-        <div class="faq">
+        <div class="faq reveal">
           <h3>Are there rounds?</h3>
           <p>No. The first Vibe Code Cup is one challenge, one build window, and one submission.</p>
         </div>
@@ -1172,6 +1236,16 @@
   <footer class="footer container">Vibe Code Cup • premium builder competition</footer>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
       const trophyRuntimeKey = '__vccTrophyHeroRuntime';
       if (window[trophyRuntimeKey]?.initialized) return;
       window[trophyRuntimeKey] = { initialized: true };
