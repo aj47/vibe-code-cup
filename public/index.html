@@ -724,6 +724,70 @@
       background: rgba(255,255,255,0.02);
       font-weight: 700;
       padding: 14px;
+      transition: border-color .14s ease, background .14s ease;
+    }
+
+    a.sponsor-slot:hover {
+      border-color: rgba(114,255,152,0.3);
+      background: rgba(114,255,152,0.04);
+      color: var(--text);
+    }
+
+    .sponsor-slot-brand {
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 16px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .sponsor-brand-title {
+      width: 100%;
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .sponsor-brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .sponsor-logo {
+      width: 64px;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .sponsor-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+      text-align: left;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sponsor-copy strong {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.1;
+    }
+
+    .sponsor-copy span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 500;
+      max-width: 120px;
     }
 
     .footer {
@@ -790,7 +854,7 @@
     <div class="container topbar-inner">
       <div class="brand"><svg class="brand-dot" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path fill="#2d6c44" d="M20 14h24v6h6v10h-6v8H20v-8h-6V20h6z"/><path fill="#7be396" d="M22 18h20v16H22z"/><path fill="#eaffee" d="M24 18h10v6H24z"/><path fill="#4fa56b" d="M28 38h8v6h-8zm-6 10h20v6H22z"/><path fill="#72ff98" d="M16 22h4v6h-4zm28 0h4v6h-4z"/></svg> Vibe Code Cup</div>
       <div class="nav">
-        <a href="#format">Format</a>
+        <a href="#format">How it works</a>
         <a href="/apply-competitor.html">Register</a>
         <a href="#sponsors">Sponsors</a>
         <a href="#faq">FAQ</a>
@@ -854,15 +918,35 @@
       <div class="sponsor-marquee">
         <div class="sponsor-track">
           <!-- First set of sponsors -->
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Title Sponsor</div></div>
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Prize Partner</div></div>
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Broadcast Partner</div></div>
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Tools Partner</div></div>
+          <div class="sponsor-box panel">
+            <a href="https://augmentcode.com" target="_blank" rel="noopener noreferrer" class="sponsor-slot sponsor-slot-brand" style="text-decoration: none;">
+              <strong class="sponsor-brand-title">Augment Code</strong>
+              <div class="sponsor-brand-row">
+                <img src="/augment-logo.png" alt="Augment Code" class="sponsor-logo" />
+                <div class="sponsor-copy">
+                  <span>AI agents that understand your entire codebase.</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="sponsor-box panel"><a href="/apply-sponsor.html" class="sponsor-slot" style="text-decoration: none; display: flex;">Your Brand Here<br>Prize Partner</a></div>
+          <div class="sponsor-box panel"><a href="/apply-sponsor.html" class="sponsor-slot" style="text-decoration: none; display: flex;">Your Brand Here<br>Broadcast Partner</a></div>
+          <div class="sponsor-box panel"><a href="/apply-sponsor.html" class="sponsor-slot" style="text-decoration: none; display: flex;">Your Brand Here<br>Tools Partner</a></div>
           <!-- Duplicate set for seamless looping -->
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Title Sponsor</div></div>
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Prize Partner</div></div>
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Broadcast Partner</div></div>
-          <div class="sponsor-box panel"><div class="sponsor-slot">Your Brand Here<br>Tools Partner</div></div>
+          <div class="sponsor-box panel">
+            <a href="https://augmentcode.com" target="_blank" rel="noopener noreferrer" class="sponsor-slot sponsor-slot-brand" style="text-decoration: none;">
+              <strong class="sponsor-brand-title">Augment Code</strong>
+              <div class="sponsor-brand-row">
+                <img src="/augment-logo.png" alt="Augment Code" class="sponsor-logo" />
+                <div class="sponsor-copy">
+                  <span>AI agents that understand your entire codebase.</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="sponsor-box panel"><a href="/apply-sponsor.html" class="sponsor-slot" style="text-decoration: none; display: flex;">Your Brand Here<br>Prize Partner</a></div>
+          <div class="sponsor-box panel"><a href="/apply-sponsor.html" class="sponsor-slot" style="text-decoration: none; display: flex;">Your Brand Here<br>Broadcast Partner</a></div>
+          <div class="sponsor-box panel"><a href="/apply-sponsor.html" class="sponsor-slot" style="text-decoration: none; display: flex;">Your Brand Here<br>Tools Partner</a></div>
         </div>
       </div>
       <div style="text-align: center; display: flex; justify-content: center; width: 100%;">
@@ -926,25 +1010,38 @@
 
     <section id="format" class="section container">
       <div class="section-head">
-        <h2>Format</h2>
-        <p class="section-lead">One reveal. One clock. Real software under pressure.</p>
+        <h2>How it works</h2>
+        <p class="section-lead">Vibe Code Cup is easy to enter and hard to win. Sign up, show up live, get the challenge, build fast, and submit your best work.</p>
       </div>
       <div class="grid-3">
         <div class="feature">
           <div class="section-label">01</div>
-          <h3>Kickoff</h3>
-          <p>The challenge is revealed live at kickoff. No advance prep.</p>
+          <h3>Sign up and join live</h3>
+          <p>Registration is open to anyone. On event day, join the livestream and Discord to get the challenge live with everyone else.</p>
         </div>
         <div class="feature">
           <div class="section-label">02</div>
-          <h3>Sprint</h3>
-          <p>Bring whatever tools you trust. You have 90 minutes to build, test, and submit.</p>
+          <h3>The prompt drops at kickoff</h3>
+          <p>No advance prep. The challenge is revealed live, and competitors get the prompt plus a sample submission at the same time.</p>
         </div>
         <div class="feature">
           <div class="section-label">03</div>
-          <h3>Finale</h3>
-          <p>Results are revealed same-day on an entertaining live stream, featuring post-match analysis and athlete interviews.</p>
+          <h3>Bring whatever tools you trust</h3>
+          <p>This is a no-holds-barred build competition. AI tools, editors, terminals, design help, custom workflows — whatever makes you fastest.</p>
         </div>
+        <div class="feature">
+          <div class="section-label">04</div>
+          <h3>One build window. One submission.</h3>
+          <p>You get one timed window to build and ship your entry, then submit it to the competition GitHub repo. No rounds. No second chances.</p>
+        </div>
+        <div class="feature">
+          <div class="section-label">05</div>
+          <h3>Tested against the field</h3>
+          <p>After submissions close, entries go through a scalable judging process designed to compare them against each other in a way that is serious under the hood and entertaining to follow.</p>
+        </div>
+      </div>
+      <div class="section-head" style="margin-top: 24px;">
+        <p class="section-lead">One challenge. One clock. One submission. Then the results go live.</p>
       </div>
 
     </section>
@@ -991,16 +1088,20 @@
       </div>
       <div class="grid-3">
         <div class="faq">
-          <h3>What do competitors win?</h3>
-          <p>We are starting with a base $1,000+ cash prize pool alongside exclusive developer gear and tools. More importantly: bragging rights and exposure in front of top technical operators.</p>
+          <h3>How do I enter?</h3>
+          <p>Sign up in advance, then join the livestream and Discord on event day when the challenge goes live.</p>
         </div>
         <div class="faq">
-          <h3>Do competitors know the challenge?</h3>
-          <p>No. The challenge is disclosed only at kickoff.</p>
+          <h3>What happens during the competition?</h3>
+          <p>The challenge is revealed live, competitors get the prompt plus a sample submission, and everyone builds against the same clock.</p>
         </div>
         <div class="faq">
-          <h3>What tools are allowed?</h3>
-          <p>All tools are allowed during the build. Final submissions still need to stand on their own.</p>
+          <h3>How am I judged?</h3>
+          <p>Entries go through a scalable judging process that compares submissions against the field. More details will be shared closer to the event.</p>
+        </div>
+        <div class="faq">
+          <h3>Are there rounds?</h3>
+          <p>No. The first Vibe Code Cup is one challenge, one build window, and one submission.</p>
         </div>
       </div>
     </section>
