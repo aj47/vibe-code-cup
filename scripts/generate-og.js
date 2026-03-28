@@ -6,6 +6,8 @@ const { Resvg } = require('@resvg/resvg-js');
 async function generateOGImage() {
   // Fix font fetching by using a reliable CDN that hosts raw TTF files for Satori
   const fontData = await fetch('https://cdn.jsdelivr.net/fontsource/fonts/roboto@latest/latin-700-normal.ttf').then(res => res.arrayBuffer());
+  const trophySvg = fs.readFileSync(path.join(__dirname, '..', 'public', 'favicon-trophy-phosphor.svg'), 'utf8');
+  const trophyDataUri = `data:image/svg+xml;base64,${Buffer.from(trophySvg).toString('base64')}`;
 
   const markup = {
     type: 'div',
@@ -18,6 +20,8 @@ async function generateOGImage() {
         justifyContent: 'center',
         alignItems: 'center',
         background: 'linear-gradient(135deg, #0c1911 0%, #060a08 100%)',
+        backgroundImage: 'radial-gradient(circle at 82% 18%, rgba(114, 255, 152, 0.14) 0%, rgba(114, 255, 152, 0.06) 18%, rgba(114, 255, 152, 0) 34%), linear-gradient(rgba(114, 255, 152, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(114, 255, 152, 0.045) 1px, transparent 1px)',
+        backgroundSize: 'auto, 100% 34px, 34px 100%',
         color: '#f4fff6',
         fontFamily: 'Roboto',
       },
@@ -37,9 +41,39 @@ async function generateOGImage() {
               fontWeight: 700,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              marginBottom: '32px'
+              marginBottom: '28px'
             },
             children: 'Elite builders • Timed challenge'
+          }
+        },
+        {
+          type: 'div',
+          props: {
+            style: {
+              width: '220px',
+              height: '220px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: '32px',
+              borderRadius: '32px',
+              border: '1px solid rgba(139, 255, 176, 0.14)',
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(5, 10, 7, 0.72)',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04)',
+              backgroundImage: 'linear-gradient(rgba(114, 255, 152, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(114, 255, 152, 0.05) 1px, transparent 1px)',
+              backgroundSize: '100% 18px, 18px 100%',
+            },
+            children: {
+              type: 'img',
+              props: {
+                src: trophyDataUri,
+                width: 156,
+                height: 156,
+                style: {
+                  display: 'block',
+                }
+              }
+            }
           }
         },
         {
@@ -49,8 +83,8 @@ async function generateOGImage() {
               margin: '0',
               fontSize: '120px',
               fontWeight: 700,
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
+              lineHeight: 0.95,
+              letterSpacing: '-0.04em',
               textTransform: 'uppercase',
               textAlign: 'center',
             },
@@ -61,9 +95,23 @@ async function generateOGImage() {
           type: 'div',
           props: {
             style: {
+              marginTop: '18px',
+              maxWidth: '820px',
+              color: '#d9e9dd',
+              fontSize: '34px',
+              lineHeight: 1.25,
+              textAlign: 'center',
+            },
+            children: 'All tools allowed. Hard challenge disclosed at kickoff. Build online from anywhere.'
+          }
+        },
+        {
+          type: 'div',
+          props: {
+            style: {
               display: 'flex',
-              gap: '24px',
-              marginTop: '40px',
+              gap: '20px',
+              marginTop: '36px',
             },
             children: [
               {
@@ -71,7 +119,7 @@ async function generateOGImage() {
                 props: {
                   style: {
                     display: 'flex',
-                    padding: '16px 32px',
+                    padding: '16px 28px',
                     borderRadius: '999px',
                     border: '1px solid rgba(139, 255, 176, 0.3)',
                     background: 'rgba(255, 255, 255, 0.03)',
@@ -87,7 +135,7 @@ async function generateOGImage() {
                 props: {
                   style: {
                     display: 'flex',
-                    padding: '16px 32px',
+                    padding: '16px 28px',
                     borderRadius: '999px',
                     border: '1px solid rgba(255, 255, 255, 0.08)',
                     background: 'rgba(255, 255, 255, 0.03)',
@@ -95,7 +143,7 @@ async function generateOGImage() {
                     fontSize: '28px',
                     fontWeight: 700,
                   },
-                  children: 'SF + Online'
+                  children: 'Anyone can join online'
                 }
               }
             ]
