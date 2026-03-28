@@ -662,6 +662,68 @@
       gap: 16px;
     }
 
+    .linear-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .linear-flow .feature {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0 24px;
+      padding: 24px 32px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .linear-flow .section-label {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      margin-bottom: 0;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(114,255,152,0.08);
+      color: var(--accent);
+      border: 1px solid rgba(114,255,152,0.14);
+      font-size: 16px;
+      font-weight: 700;
+      padding: 0;
+    }
+
+    .linear-flow h3 {
+      grid-column: 2;
+      margin: 0;
+      font-size: 22px;
+      padding-top: 4px;
+    }
+
+    .linear-flow p {
+      grid-column: 2;
+      margin: 8px 0 0;
+    }
+
+    @media (max-width: 600px) {
+      .linear-flow .feature {
+        padding: 24px;
+        gap: 0 16px;
+      }
+      .linear-flow .section-label {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+      }
+    }
+
     .feature, .faq, .sponsor-box {
       padding: 22px;
     }
@@ -980,40 +1042,12 @@
       </div>
     </section>
 
-    <section id="enter" class="section container">
-      <div class="section-head" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
-        <h2>Open Registration</h2>
-        <p class="section-lead">Registration is fully open to builders everywhere. Anyone can join online, and we may also host an in-person event in San Francisco alongside it. Bring your tools, show your workflow, and build under pressure.</p>
-      </div>
-
-      <div class="grid-3" style="margin-bottom: 32px;">
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
-          <h3 style="font-size: 20px; color: var(--text);">Clear workflows</h3>
-          <p style="font-size: 15px;">We want to see how you build, debug, and ship when the clock is ticking.</p>
-        </div>
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
-          <h3 style="font-size: 20px; color: var(--text);">Interesting tool stacks</h3>
-          <p style="font-size: 15px;">Cursor, Windsurf, pure Vim, or something custom. Use what makes you fastest.</p>
-        </div>
-        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
-          <h3 style="font-size: 20px; color: var(--text);">Ship-ready taste</h3>
-          <p style="font-size: 15px;">It has to work, but it also has to look good. We index high on execution quality.</p>
-        </div>
-      </div>
-
-      <div style="text-align: center; display: flex; justify-content: center; width: 100%;">
-        <div class="register-action" style="max-width: 400px; width: 100%;">
-          <a href="/apply-competitor.html" class="btn btn-primary" style="padding: 0 32px; font-size: 16px; width: 100%;">Register Now</a>
-        </div>
-      </div>
-    </section>
-
     <section id="format" class="section container">
       <div class="section-head">
         <h2>How it works</h2>
         <p class="section-lead">Vibe Code Cup is easy to enter and hard to win. Sign up, show up live, get the challenge, build fast, and submit your best work.</p>
       </div>
-      <div class="grid-3">
+      <div class="linear-flow">
         <div class="feature">
           <div class="section-label">01</div>
           <h3>Sign up and join live</h3>
@@ -1044,6 +1078,34 @@
         <p class="section-lead">One challenge. One clock. One submission. Then the results go live.</p>
       </div>
 
+    </section>
+
+    <section id="enter" class="section container">
+      <div class="section-head" style="justify-content: center; text-align: center; margin-bottom: 32px; flex-direction: column; align-items: center;">
+        <h2>Open Registration</h2>
+        <p class="section-lead">Registration is fully open to builders everywhere. Anyone can join online, and we may also host an in-person event in San Francisco alongside it. Bring your tools, show your workflow, and build under pressure.</p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 32px;">
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <h3 style="font-size: 20px; color: var(--text);">Clear workflows</h3>
+          <p style="font-size: 15px;">We want to see how you build, debug, and ship when the clock is ticking.</p>
+        </div>
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <h3 style="font-size: 20px; color: var(--text);">Interesting tool stacks</h3>
+          <p style="font-size: 15px;">Cursor, Windsurf, pure Vim, or something custom. Use what makes you fastest.</p>
+        </div>
+        <div class="feature panel" style="background: transparent; border-color: transparent; text-align: center;">
+          <h3 style="font-size: 20px; color: var(--text);">Ship-ready taste</h3>
+          <p style="font-size: 15px;">It has to work, but it also has to look good. We index high on execution quality.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; display: flex; justify-content: center; width: 100%;">
+        <div class="register-action" style="max-width: 400px; width: 100%;">
+          <a href="/apply-competitor.html" class="btn btn-primary" style="padding: 0 32px; font-size: 16px; width: 100%;">Register Now</a>
+        </div>
+      </div>
     </section>
 
     <section id="watch" class="section container">
