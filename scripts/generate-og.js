@@ -6,8 +6,8 @@ const { Resvg } = require('@resvg/resvg-js');
 async function generateOGImage() {
   // Fix font fetching by using a reliable CDN that hosts raw TTF files for Satori
   const fontData = await fetch('https://cdn.jsdelivr.net/fontsource/fonts/roboto@latest/latin-700-normal.ttf').then(res => res.arrayBuffer());
-  const trophySvg = fs.readFileSync(path.join(__dirname, '..', 'public', 'favicon-trophy-phosphor.svg'), 'utf8');
-  const trophyDataUri = `data:image/svg+xml;base64,${Buffer.from(trophySvg).toString('base64')}`;
+  const trophyPng = fs.readFileSync(path.join(__dirname, '..', 'public', 'trophy-pixelated.png'));
+  const trophyDataUri = `data:image/png;base64,${trophyPng.toString('base64')}`;
 
   const markup = {
     type: 'div',
@@ -71,6 +71,7 @@ async function generateOGImage() {
                 height: 156,
                 style: {
                   display: 'block',
+                  imageRendering: 'pixelated',
                 }
               }
             }

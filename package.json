@@ -32,6 +32,7 @@
     "miniflare": "^4.20260317.2",
     "path-to-regexp": "^6.3.0",
     "pathe": "^2.0.3",
+    "puppeteer": "^24.40.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "satori": "^0.26.0",
